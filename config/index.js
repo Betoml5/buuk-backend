@@ -8,6 +8,9 @@ const config = {
   dbPassword: process.env.DB_PASSWORD,
   dbHost: process.env.DB_HOST,
   dbName: process.env.DB_NAME,
+  nyApi: process.env.NY_API,
+  nykey: process.env.NY_KEY,
+  openlibraryApi: process.env.OPEN_LIBRARY_API,
 };
 
 module.exports = { config };
