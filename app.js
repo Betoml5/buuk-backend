@@ -12,7 +12,7 @@ mongoose
     `mongodb+srv://${USER}:${PASSWORD}${config.dbHost}/${config.dbName}?retryWrites=true&w=majority`
   )
   .then(() => {
-    console.log(`Conectado satisfactoriamente en el puerto: ${config.port}`);
+    console.log(`Conectado a la [DB]`);
   })
   .catch((e) => console.log("Error", e));
 
