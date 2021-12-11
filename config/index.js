@@ -11,6 +11,7 @@ const config = {
   nyApi: process.env.NY_API,
   nykey: process.env.NY_KEY,
   openlibraryApi: process.env.OPEN_LIBRARY_API,
+  version: process.env.VERSION,
 };
 
 module.exports = { config };

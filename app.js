@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const app = express();
 const { config } = require("./config");
 const cors = require("cors");
+const bookRouter = require("./routes/Book");
 
 const USER = encodeURIComponent(config.dbUser);
 const PASSWORD = encodeURIComponent(config.dbPassword);
@@ -20,5 +21,7 @@ app.use(cors());
 app.options("*", cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(`/api/${config.version}/books`, bookRouter);
 
 module.exports = app;
