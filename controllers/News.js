@@ -4,11 +4,26 @@ const responseHTTP = require("../network/response");
 const controller = {
     booksNews: async (req, res) => {
         try {
-            const response = await axios.get(
-                `${config.mediaStackApi}/news?access_key=${config.mediaStackKey}&keywords=libros&languages=es&country=mx`
-            );
-            const news = response.data;
-            return responseHTTP.success(req, res, news, 200);
+            const options = {
+                method: "GET",
+                url: "https://free-news.p.rapidapi.com/v1/search",
+                params: {
+                    q: "libros",
+                    lang: "es",
+                    page: "1",
+                    page_size: "25",
+                },
+                headers: {
+                    "x-rapidapi-key": `${config.freeNewsKey}`,
+                    "x-rapidapi-host": "free-news.p.rapidapi.com",
+                },
+            };
+
+            setTimeout(async () => {
+                const response = await axios.request(options);
+                const news = response.data;
+                return responseHTTP.success(req, res, news, 200);
+            }, 5000);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);
         }
@@ -16,12 +31,22 @@ const controller = {
 
     authorsNews: async (req, res) => {
         try {
-            const response = await axios.get(
-                `${config.mediaStackApi}/news?access_key=${config.mediaStackKey}&keywords=autores de libros&languages=es&country=mx`
-            );
-            const news = response.data;
-            return responseHTTP.success(req, res, news, 200);
+            var options = {
+                method: "GET",
+                url: "https://free-news.p.rapidapi.com/v1/search",
+                params: { q: "autores de libros", lang: "es" },
+                headers: {
+                    "x-rapidapi-host": "free-news.p.rapidapi.com",
+                    "x-rapidapi-key": `${config.freeNewsKey}`,
+                },
+            };
+            setTimeout(async () => {
+                const response = await axios.request(options);
+                const news = response.data;
+                return responseHTTP.success(req, res, news, 200);
+            }, 5000);
         } catch (error) {
+            console.log(error.message);
             return responseHTTP.error(req, res, error, 500);
         }
     },

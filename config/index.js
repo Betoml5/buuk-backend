@@ -12,8 +12,8 @@ const config = {
     nykey: process.env.NY_KEY,
     openlibraryApi: process.env.OPEN_LIBRARY_API,
     version: process.env.VERSION,
-    mediaStackApi: process.env.MEDIA_STACK_API,
-    mediaStackKey: process.env.MEDIA_STACK_KEY,
+    freeNewsApi: process.env.FREE_NEWS_API,
+    freeNewsKey: process.env.FREE_NEWS_KEY,
 };
 
 module.exports = { config };
