@@ -32,17 +32,21 @@ const controller = {
                 `${config.openlibraryApi}/search.json?title=${title}`
             );
 
-            const firstDoc = docs[0] || [];
-            const bookCover = `https://covers.openlibrary.org/b/lccn/${firstDoc.cover_i}-L.jpg`;
+            const books = [];
+            // const bookCover = `https://covers.openlibrary.org/b/id/${firstDoc.cover_i}-L.jpg`;
+            for (let i = 0; i < docs.length; i++) {
+                if (docs[i].cover_i !== undefined) {
+                    books.push({
+                        id: i,
+                        work_id: docs[i].key,
+                        title: docs[i].title,
+                        subtitle: docs[i].subtitle | " ",
+                        cover: `https://covers.openlibrary.org/b/id/${docs[i].cover_i}-L.jpg`,
+                    });
+                }
+            }
 
-            const book = {
-                title: firstDoc.title,
-                subtitle: firstDoc.subtitle | " ",
-                cover: bookCover,
-                author: firstDoc.author_name,
-            };
-
-            return responseHTTP.success(req, res, book, 200);
+            return responseHTTP.success(req, res, books, 200);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);
         }
