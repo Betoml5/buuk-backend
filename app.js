@@ -3,9 +3,9 @@ const mongoose = require("mongoose");
 const app = express();
 const { config } = require("./config");
 const cors = require("cors");
-const bookRouter = require("./routes/Book");
+const booksRouter = require("./routes/Book");
 const newsRouter = require("./routes/News");
-
+const usersRouter = require("./routes/User");
 const USER = encodeURIComponent(config.dbUser);
 const PASSWORD = encodeURIComponent(config.dbPassword);
 
@@ -28,7 +28,7 @@ app.use(
         parameterLimit: 50000,
     })
 );
-
-app.use(`/api/${config.version}/books`, bookRouter);
+app.use(`/api/${config.version}/users`, usersRouter);
+app.use(`/api/${config.version}/books`, booksRouter);
 app.use(`/api/${config.version}/news`, newsRouter);
 module.exports = app;
