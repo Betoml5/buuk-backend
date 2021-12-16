@@ -6,6 +6,12 @@ const User = new Schema({
   username: { type: String, require: true },
   email: { type: String, require: true },
   password: { type: String, require: true },
+  whishlist: { type: [] },
+  readedbooks: { type: [] },
+  nowreading: { type: [] },
+  pagescount: { type: Number, default: 0 },
+  hoursreaded: { type: Number, default: 0 },
+  wordscount: { type: Number, default: 0 },
 });
 
 //Aqui lo que hacemos es que antes de que se guarde el usuario, vamos a encriptar la constraseña
