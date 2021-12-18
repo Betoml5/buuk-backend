@@ -29,7 +29,7 @@ const controller = {
             return responseHTTP.error(req, res, error, 500);
         }
     },
-    update: async (req, res, next) => {
+    update: async (req, res) => {
         const { user } = req.body;
         const { id } = req.params;
         try {
@@ -68,10 +68,14 @@ const controller = {
             return responseHTTP.error(req, res, error, 500);
         }
     },
+    login: async (req, res) => { },
+    logout: async (req, res) => { },
+    profile: async (req, res) => { },
     addToLibrary: async (req, res) => {
-        const { id, bookId } = req.query;
+        const { bookId } = req.query;
+        const { userId } = req.params;
         try {
-            const user = await User.findById(id);
+            const user = await User.findById(userId);
             user.library.push(bookId);
             user.save();
             return responseHTTP.success(req, res, user, 200);
@@ -80,9 +84,10 @@ const controller = {
         }
     },
     removeFromLibrary: async (req, res) => {
-        const { id, bookId } = req.query;
+        const { bookId } = req.query;
+        const { userId } = req.params;
         try {
-            const user = await User.findById(id);
+            const user = await User.findById(userId);
             const bookIndex = user.library.indexOf(bookId);
             user.library.splice(bookIndex, 1);
             user.save();
@@ -91,6 +96,35 @@ const controller = {
             return responseHTTP.error(req, res, error, 500);
         }
     },
+    addTimelineItem: async (req, res) => {
+        const { item } = req.body;
+        const { userId } = req.params;
+        try {
+
+            const user = await User.findById(userId);
+            user.timeline.push(item);
+            user.save();
+
+
+            return responseHTTP.success(req, res, user, 200)
+        } catch (error) {
+            return responseHTTP.error(res, res, error, 500)
+        }
+    },
+    removeTimelineItem: async (req, res) => {
+        const { userId } = req.params;
+        const { itemId } = req.query
+        try {
+            const user = await User.findById(userId)
+            const itemIndex = user.timeline.indexOf(itemId)
+            user.timeline.splice(itemIndex, 1)
+            user.save();
+            return responseHTTP.success(req, res, user, 200)
+        } catch (error) {
+            return responseHTTP.error(req, res, error, 500)
+        }
+    },
+
 };
 
 module.exports = controller;

@@ -8,5 +8,6 @@ router.get("/user/:id", controller.findOne);
 router.post("/create", controller.create);
 router.put("/update/:id", controller.update);
 router.delete("/delete/:id", controller.delete);
+router.post("/timeline", controller.addTimelineItem);
 
 module.exports = router;
