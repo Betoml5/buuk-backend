@@ -3,8 +3,10 @@ const { config } = require("../config");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const localStrategy = require("passport-local").Strategy;
-const JWTStrategy = require("passport-jwt").ExtractJwt;
+const JWTStrategy = require("passport-jwt").Strategy;
+const ExtractJWT = require("passport-jwt").ExtractJwt;
 const User = require("../models/User");
+
 
 passport.use(
   "login",
@@ -20,6 +22,7 @@ passport.use(
 
         return done(null, user, { message: "Login sucessfully" });
       } catch (error) {
+
         return done(error);
       }
     }

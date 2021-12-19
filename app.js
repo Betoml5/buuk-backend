@@ -8,6 +8,7 @@ const newsRouter = require("./routes/News");
 const usersRouter = require("./routes/User");
 const USER = encodeURIComponent(config.dbUser);
 const PASSWORD = encodeURIComponent(config.dbPassword);
+const passport = require("passport")
 
 mongoose
     .connect(
@@ -28,6 +29,9 @@ app.use(
         parameterLimit: 50000,
     })
 );
+
+require("./auth/index");
+app.use(passport.initialize())
 app.use(`/api/${config.version}/users`, usersRouter);
 app.use(`/api/${config.version}/books`, booksRouter);
 app.use(`/api/${config.version}/news`, newsRouter);

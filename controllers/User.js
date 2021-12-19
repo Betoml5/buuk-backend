@@ -1,6 +1,9 @@
 const { response } = require("express");
 const User = require("../models/User");
 const responseHTTP = require("../network/response");
+const passport = require("passport");
+const jwt = require("jsonwebtoken")
+const { config } = require("../config")
 
 const controller = {
     create: async (req, res) => {
@@ -41,7 +44,6 @@ const controller = {
                     400
                 );
             }
-
             const userUpdated = await User.findByIdAndUpdate(id, user, {
                 new: true,
             });
@@ -68,9 +70,25 @@ const controller = {
             return responseHTTP.error(req, res, error, 500);
         }
     },
-    login: async (req, res) => { },
-    logout: async (req, res) => { },
-    profile: async (req, res) => { },
+    login: async (req, res, next) => {
+        passport.authenticate("login", async (err, user, info) => {
+            try {
+                if (err | !user) {
+                    return responseHTTP.error(req, res, { message: "Invalid password or email" }, 401);
+                }
+                req.login(user, { session: false }, async (err) => {
+                    if (err) next(err);
+
+                    const body = { id: user._id, username: user.username };
+                    const token = jwt.sign({ user: body }, config.authJwtSecret)
+                    return responseHTTP.success(req, res, { token, body }, 200)
+                })
+            } catch (error) {
+                console.log(error)
+                return responseHTTP.error(req, res, error, 500);
+            }
+        })(req, res, next)
+    },
     addToLibrary: async (req, res) => {
         const { bookId } = req.query;
         const { userId } = req.params;
@@ -100,12 +118,9 @@ const controller = {
         const { item } = req.body;
         const { userId } = req.params;
         try {
-
             const user = await User.findById(userId);
             user.timeline.push(item);
             user.save();
-
-
             return responseHTTP.success(req, res, user, 200)
         } catch (error) {
             return responseHTTP.error(res, res, error, 500)
