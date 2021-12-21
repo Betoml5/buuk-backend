@@ -4,6 +4,7 @@ const responseHTTP = require("../network/response");
 const passport = require("passport");
 const jwt = require("jsonwebtoken")
 const { config } = require("../config")
+const axios = require("axios")
 
 const controller = {
     create: async (req, res) => {
@@ -13,18 +14,22 @@ const controller = {
                 return responseHTTP.error(
                     req,
                     res,
-                    { message: "Need user information" },
+                    { message: "Missing information" },
                     400
                 );
             }
+            const userValidate = await User.findOne({ user: user.email });
+            if (userValidate) return responseHTTP.error(req, res, { message: "This user already exists" }, 409)
+
             const userCreated = await User.create(user);
             return responseHTTP.success(req, res, userCreated, 201);
         } catch (error) {
+            console.log(error)
             return responseHTTP.error(req, res, error, 500);
         }
     },
     findOne: async (req, res) => {
-        const { id } = req.body;
+        const { id } = req.params;
         try {
             const user = await User.findById(id);
             return responseHTTP.success(req, res, user, 200);
@@ -91,26 +96,28 @@ const controller = {
     },
     addToLibrary: async (req, res) => {
         const { bookId } = req.query;
-        const { userId } = req.params;
+        const { id } = req.params;
         try {
-            const user = await User.findById(userId);
+            const user = await User.findById(id);
             user.library.push(bookId);
-            user.save();
+            user.save({ new: true });
             return responseHTTP.success(req, res, user, 200);
         } catch (error) {
+
             return responseHTTP.error(req, res, error, 500);
         }
     },
     removeFromLibrary: async (req, res) => {
         const { bookId } = req.query;
-        const { userId } = req.params;
+        const { id } = req.params;
         try {
-            const user = await User.findById(userId);
+            const user = await User.findById(id);
             const bookIndex = user.library.indexOf(bookId);
             user.library.splice(bookIndex, 1);
             user.save();
-            return response.succes(req, res, user, 200);
+            return responseHTTP.success(req, res, user, 200);
         } catch (error) {
+            console.log(error)
             return responseHTTP.error(req, res, error, 500);
         }
     },
@@ -127,10 +134,10 @@ const controller = {
         }
     },
     removeTimelineItem: async (req, res) => {
-        const { userId } = req.params;
+        const { indexOf } = req.params;
         const { itemId } = req.query
         try {
-            const user = await User.findById(userId)
+            const user = await User.findById(id)
             const itemIndex = user.timeline.indexOf(itemId)
             user.timeline.splice(itemIndex, 1)
             user.save();
@@ -139,6 +146,35 @@ const controller = {
             return responseHTTP.error(req, res, error, 500)
         }
     },
+    library: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const user = await User.findById(id);
+            if (!user) {
+                return responseHTTP.error(req, res, { message: "No user found" }, 404)
+            }
+            const books = [];
+            for (let i = 0; i < user.library.length; i++) {
+
+                try {
+                    const response = await axios.get(`https://openlibrary.org${user.library[i]}.json`);
+                    const book = response.data;
+
+                    books.push({
+                        id: i,
+                        cover: `https://covers.openlibrary.org/b/id/${book.covers[0]}-L.jpg`,
+                        description: book.description
+                    })
+                } catch (error) {
+                    return responseHTTP.error(req, res, error, 500)
+                }
+            }
+
+            return responseHTTP.success(req, res, books, 200);
+        } catch (error) {
+            return responseHTTP.error(req, res, error, 500);
+        }
+    }
 
 };
 

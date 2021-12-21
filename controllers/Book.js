@@ -33,7 +33,6 @@ const controller = {
             );
 
             const books = [];
-            // const bookCover = `https://covers.openlibrary.org/b/id/${firstDoc.cover_i}-L.jpg`;
             for (let i = 0; i < docs.length; i++) {
                 if (docs[i].cover_i !== undefined) {
                     books.push({
