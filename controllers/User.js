@@ -98,12 +98,19 @@ const controller = {
         const { bookId } = req.query;
         const { id } = req.params;
         try {
+            const bookResponse = await axios.get(`https://openlibrary.org/${bookId}.json`);
+            const book = {
+                id: bookResponse.data?.key,
+                title: bookResponse.data.title,
+                cover: `https://covers.openlibrary.org/b/id/${bookResponse.data?.covers[0]}-L.jpg`,
+                description: bookResponse.data?.description
+            }
             const user = await User.findById(id);
-            user.library.push(bookId);
+            user.library.push(book);
             user.save({ new: true });
             return responseHTTP.success(req, res, user, 200);
         } catch (error) {
-
+            console.log(error)
             return responseHTTP.error(req, res, error, 500);
         }
     },
@@ -159,19 +166,20 @@ const controller = {
                 try {
                     const response = await axios.get(`https://openlibrary.org${user.library[i]}.json`);
                     const book = response.data;
-
                     books.push({
                         id: i,
-                        cover: `https://covers.openlibrary.org/b/id/${book.covers[0]}-L.jpg`,
+                        cover: `https://covers.openlibrary.org/b/id/${book?.covers[0]}-L.jpg`,
                         description: book.description
                     })
                 } catch (error) {
+                    console.log(error.message)
                     return responseHTTP.error(req, res, error, 500)
                 }
             }
 
             return responseHTTP.success(req, res, books, 200);
         } catch (error) {
+            console.log(error)
             return responseHTTP.error(req, res, error, 500);
         }
     }
