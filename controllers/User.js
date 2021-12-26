@@ -84,7 +84,7 @@ const controller = {
                 req.login(user, { session: false }, async (err) => {
                     if (err) next(err);
 
-                    const body = { id: user._id, username: user.username };
+                    const body = { user };
                     const token = jwt.sign({ user: body }, config.authJwtSecret)
                     return responseHTTP.success(req, res, { token, body }, 200)
                 })
@@ -103,7 +103,8 @@ const controller = {
                 id: bookResponse.data?.key,
                 title: bookResponse.data.title,
                 cover: `https://covers.openlibrary.org/b/id/${bookResponse.data?.covers[0]}-L.jpg`,
-                description: bookResponse.data?.description
+                description: bookResponse.data?.description,
+                numberPages: 0
             }
             const user = await User.findById(id);
             user.library.push(book);
@@ -130,13 +131,21 @@ const controller = {
     },
     addTimelineItem: async (req, res) => {
         const { item } = req.body;
-        const { userId } = req.params;
+        const { id } = req.params;
         try {
-            const user = await User.findById(userId);
+            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const date = new Date().getDate();
+            const fullDate = new Date().toLocaleDateString("es-MX", options);
+            fullDate.charAt(0).toUpperCase();
+            item.fulldate = fullDate;
+            item.date = date;
+            const user = await User.findById(id);
+            user.pagescount = user.pagescount + item.book.numberPages;
             user.timeline.push(item);
             user.save();
             return responseHTTP.success(req, res, user, 200)
         } catch (error) {
+            console.log(error)
             return responseHTTP.error(res, res, error, 500)
         }
     },
@@ -153,36 +162,6 @@ const controller = {
             return responseHTTP.error(req, res, error, 500)
         }
     },
-    library: async (req, res) => {
-        const { id } = req.params;
-        try {
-            const user = await User.findById(id);
-            if (!user) {
-                return responseHTTP.error(req, res, { message: "No user found" }, 404)
-            }
-            const books = [];
-            for (let i = 0; i < user.library.length; i++) {
-
-                try {
-                    const response = await axios.get(`https://openlibrary.org${user.library[i]}.json`);
-                    const book = response.data;
-                    books.push({
-                        id: i,
-                        cover: `https://covers.openlibrary.org/b/id/${book?.covers[0]}-L.jpg`,
-                        description: book.description
-                    })
-                } catch (error) {
-                    console.log(error.message)
-                    return responseHTTP.error(req, res, error, 500)
-                }
-            }
-
-            return responseHTTP.success(req, res, books, 200);
-        } catch (error) {
-            console.log(error)
-            return responseHTTP.error(req, res, error, 500);
-        }
-    }
 
 };
 
