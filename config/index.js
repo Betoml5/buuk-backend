@@ -14,7 +14,8 @@ const config = {
     version: process.env.VERSION,
     freeNewsApi: process.env.FREE_NEWS_API,
     freeNewsKey: process.env.FREE_NEWS_KEY,
-    authJwtSecret: process.env.AUTH_JWT_SECRET
+    authJwtSecret: process.env.AUTH_JWT_SECRET,
+    googleApi: process.env.GOOGLE_API,
 };
 
 module.exports = { config };
