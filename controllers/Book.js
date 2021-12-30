@@ -52,22 +52,23 @@ const controller = {
     searchBooksBySubject: async (req, res) => {
         const { q } = req.query;
         try {
-            const response = await axios.get(`http://openlibrary.org/subjects/${q}.json?details=true&limit=20`);
-            const works = response.data.works;
-            const books = [];
-            for (let i = 0; i < works.length; i++) {
-                books.push({
-                    id: works[i].key,
-                    title: works[i].title,
-                    cover: `https://covers.openlibrary.org/b/id/${works[i].cover_id}-L.jpg`,
-
-                })
-            }
-            return responseHTTP.success(req, res, books, 200);
+            const response = await axios.get(
+                `${config.googleApi}/volumes?q=subject:${q}`
+            );
+            // const works = response.data.works;
+            // const books = [];
+            // for (let i = 0; i < works.length; i++) {
+            //     books.push({
+            //         id: works[i].key,
+            //         title: works[i].title,
+            //         cover: `https://covers.openlibrary.org/b/id/${works[i].cover_id}-L.jpg`,
+            //     });
+            // }
+            return responseHTTP.success(req, res, response.data, 200);
         } catch (error) {
-            return responseHTTP.error(req, res, error, 500)
+            return responseHTTP.error(req, res, error, 500);
         }
-    }
+    },
 };
 
 module.exports = controller;
