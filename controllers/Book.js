@@ -26,24 +26,24 @@ const controller = {
     searchBook: async (req, res) => {
         const { title } = req.query;
         try {
-            const {
-                data: { docs },
-            } = await axios.get(
-                `${config.openlibraryApi}/search.json?title=${title}`
+            const response = await axios.get(
+                `${config.googleApi}/volumes?q=${title}`
             );
 
-            const books = [];
-            for (let i = 0; i < docs.length; i++) {
-                if (docs[i].cover_i !== undefined) {
-                    books.push({
-                        id: i,
-                        work_id: docs[i].key,
-                        title: docs[i].title,
-                        subtitle: docs[i].subtitle | " ",
-                        cover: `https://covers.openlibrary.org/b/id/${docs[i].cover_i}-L.jpg`,
-                    });
-                }
-            }
+            const books = response.data.items.map((book) => ({
+                id: book.id,
+                selflink: book.selflink,
+                title: book.volumeInfo.title,
+                description: book.volumeInfo.description,
+                publishedDate: book.volumeInfo.publishedDate,
+                pageCount: book.volumeInfo.pageCount,
+                avgRating: book.volumeInfo.averageRating,
+                authors: book.volumeInfo.authors,
+                images: book.volumeInfo.imageLinks,
+                lang: book.volumeInfo.language,
+                cover: `https://covers.openlibrary.org/b/isbn/${book.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
+            }));
+
             return responseHTTP.success(req, res, books, 200);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);
@@ -55,17 +55,24 @@ const controller = {
             const response = await axios.get(
                 `${config.googleApi}/volumes?q=subject:${q}`
             );
-            // const works = response.data.works;
-            // const books = [];
-            // for (let i = 0; i < works.length; i++) {
-            //     books.push({
-            //         id: works[i].key,
-            //         title: works[i].title,
-            //         cover: `https://covers.openlibrary.org/b/id/${works[i].cover_id}-L.jpg`,
-            //     });
-            // }
-            return responseHTTP.success(req, res, response.data, 200);
+
+            const books = response.data.items.map((book) => ({
+                id: book.id,
+                selflink: book.selflink,
+                title: book.volumeInfo.title,
+                description: book.volumeInfo.description,
+                publishedDate: book.volumeInfo.publishedDate,
+                pageCount: book.volumeInfo.pageCount,
+                avgRating: book.volumeInfo.averageRating,
+                authors: book.volumeInfo.authors,
+                images: book.volumeInfo.imageLinks,
+                lang: book.volumeInfo.language,
+                cover: `https://covers.openlibrary.org/b/isbn/${book.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
+            }));
+
+            return responseHTTP.success(req, res, books, 200);
         } catch (error) {
+            console.log(error);
             return responseHTTP.error(req, res, error, 500);
         }
     },

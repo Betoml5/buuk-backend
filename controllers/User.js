@@ -97,7 +97,7 @@ const controller = {
 
                     const body = { user };
                     const token = jwt.sign(
-                        { user: body },
+                        { user: user._id },
                         config.authJwtSecret
                     );
                     return responseHTTP.success(req, res, { token, body }, 200);
