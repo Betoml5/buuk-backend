@@ -27,7 +27,7 @@ const controller = {
         const { title } = req.query;
         try {
             const response = await axios.get(
-                `${config.googleApi}/volumes?q=${title}`
+                `${config.googleApi}/volumes?q=${title}&langRestrict=es`
             );
 
             const books = response.data.items.map((book) => ({
@@ -53,7 +53,7 @@ const controller = {
         const { q } = req.query;
         try {
             const response = await axios.get(
-                `${config.googleApi}/volumes?q=subject:${q}`
+                `${config.googleApi}/volumes?q=subject:${q}&langRestrict=es`
             );
 
             const books = response.data.items.map((book) => ({
