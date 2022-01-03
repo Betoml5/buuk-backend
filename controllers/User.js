@@ -18,14 +18,6 @@ const controller = {
                     400
                 );
             }
-            const userValidate = await User.findOne({ user: user.email });
-            if (userValidate)
-                return responseHTTP.error(
-                    req,
-                    res,
-                    { message: "This user already exists" },
-                    409
-                );
 
             const userCreated = await User.create(user);
             return responseHTTP.success(req, res, userCreated, 201);
@@ -46,6 +38,7 @@ const controller = {
     update: async (req, res) => {
         const { user } = req.body;
         const { id } = req.params;
+        console.log(id);
         try {
             if (!user) {
                 return responseHTTP.error(
@@ -58,8 +51,9 @@ const controller = {
             const userUpdated = await User.findByIdAndUpdate(id, user, {
                 new: true,
             });
-            return responseHTTP.success(req, res, userUpdated);
+            return responseHTTP.success(req, res, userUpdated, 200);
         } catch (error) {
+            console.log(error);
             return responseHTTP.error(req, res, error, 500);
         }
     },
@@ -112,15 +106,22 @@ const controller = {
         const { bookId } = req.query;
         const { id } = req.params;
         try {
-            const bookResponse = await axios.get(
-                `https://openlibrary.org/${bookId}.json`
+            const response = await axios.get(
+                `${config.googleApi}/volumes?q=${bookId}`
             );
+            const item = response.data.items[0];
             const book = {
-                id: bookResponse.data?.key,
-                title: bookResponse.data.title,
-                cover: `https://covers.openlibrary.org/b/id/${bookResponse.data?.covers[0]}-L.jpg`,
-                description: bookResponse.data?.description,
-                numberPages: 0,
+                id: item.id,
+                selflink: item.selflink,
+                title: item.volumeInfo.title,
+                description: item.volumeInfo.description,
+                publishedDate: item.volumeInfo.publishedDate,
+                pageCount: item.volumeInfo.pageCount,
+                avgRating: item.volumeInfo.averageRating,
+                authors: item.volumeInfo.authors,
+                images: item.volumeInfo.imageLinks,
+                lang: item.volumeInfo.language,
+                cover: `https://covers.openlibrary.org/b/isbn/${item.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
             };
             const user = await User.findById(id);
             user.library.push(book);

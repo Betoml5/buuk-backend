@@ -6,6 +6,7 @@ const User = new Schema({
     username: { type: String, require: true, unique: true },
     email: { type: String, require: true, unique: true },
     password: { type: String, require: true, minlength: 8 },
+    image: { type: String, required: false, default: "" },
     whishlist: { type: [] },
     readedbooks: { type: [] },
     library: { type: [] },
