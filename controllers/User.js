@@ -107,12 +107,12 @@ const controller = {
         const { id } = req.params;
         try {
             const response = await axios.get(
-                `${config.googleApi}/volumes?q=${bookId}`
+                `${config.googleApi}/volumes/${bookId}`
             );
-            const item = response.data.items[0];
+            const item = response.data;
             const book = {
                 id: item.id,
-                selflink: item.selflink,
+                selfLink: item.selfLink,
                 title: item.volumeInfo.title,
                 description: item.volumeInfo.description,
                 publishedDate: item.volumeInfo.publishedDate,

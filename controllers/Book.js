@@ -32,7 +32,7 @@ const controller = {
 
             const books = response.data.items.map((book) => ({
                 id: book.id,
-                selflink: book.selflink,
+                selfLink: book.selfLink,
                 title: book.volumeInfo.title,
                 description: book.volumeInfo.description,
                 publishedDate: book.volumeInfo.publishedDate,
@@ -58,7 +58,7 @@ const controller = {
 
             const books = response.data.items.map((book) => ({
                 id: book.id,
-                selflink: book.selflink,
+                selfLink: book.selfLink,
                 title: book.volumeInfo.title,
                 description: book.volumeInfo.description,
                 publishedDate: book.volumeInfo.publishedDate,
