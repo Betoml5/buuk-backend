@@ -38,7 +38,7 @@ const controller = {
     update: async (req, res) => {
         const { user } = req.body;
         const { id } = req.params;
-        console.log(id);
+        console.log(user.image);
         try {
             if (!user) {
                 return responseHTTP.error(

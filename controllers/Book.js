@@ -1,6 +1,7 @@
 const { config } = require("../config");
 const axios = require("axios");
 const responseHTTP = require("../network/response");
+const boom = require("@hapi/boom");
 
 const controller = {
     bestSellers: async (req, res) => {
@@ -18,7 +19,7 @@ const controller = {
                     response.data.results.lists,
                     200
                 );
-            }, 5000);
+            }, 1000);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);
         }
@@ -29,6 +30,13 @@ const controller = {
             const response = await axios.get(
                 `${config.googleApi}/volumes?q=${title}&langRestrict=es`
             );
+
+            if (response.data.items.length === 0) {
+                return responseHTTP.error(req, res, {
+                    message: "No results found",
+                    totalItems: 0,
+                });
+            }
 
             const books = response.data.items.map((book) => ({
                 id: book.id,
@@ -53,8 +61,14 @@ const controller = {
         const { q } = req.query;
         try {
             const response = await axios.get(
-                `${config.googleApi}/volumes?q=subject:${q}&langRestrict=es`
+                `${config.googleApi}/volumes?q=subject:${q}&langRestrict=es&orderBy=newest`
             );
+            if (response.data.totalItems === 0) {
+                return responseHTTP.error(req, res, {
+                    message: "No results",
+                    totalItems: 0,
+                });
+            }
 
             const books = response.data.items.map((book) => ({
                 id: book.id,
@@ -72,7 +86,6 @@ const controller = {
 
             return responseHTTP.success(req, res, books, 200);
         } catch (error) {
-            console.log(error);
             return responseHTTP.error(req, res, error, 500);
         }
     },

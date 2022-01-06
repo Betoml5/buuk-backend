@@ -24,7 +24,7 @@ const controller = {
                 const response = await axios.request(options);
                 const news = response.data;
                 return responseHTTP.success(req, res, news, 200);
-            }, 5000);
+            }, 2000);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);
         }

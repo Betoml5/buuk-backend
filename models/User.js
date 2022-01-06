@@ -34,4 +34,10 @@ User.validatePassword = async function validatePassword(password) {
     return bcrypt.compare(password, this.password);
 };
 
+User.static("findOneOrCreate", async function findOneOrCreate(condition, doc) {
+    const one = await this.findOne(condition);
+
+    return one || this.create(doc);
+});
+
 module.exports = model("User", User);
