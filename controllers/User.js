@@ -110,6 +110,7 @@ const controller = {
                 `${config.googleApi}/volumes/${bookId}`
             );
             const item = response.data;
+
             const book = {
                 id: item.id,
                 selfLink: item.selfLink,
@@ -156,12 +157,11 @@ const controller = {
                 month: "long",
                 day: "numeric",
             };
+            const user = await User.findById(id);
             const date = new Date().getDate();
             const fullDate = new Date().toLocaleDateString("es-MX", options);
-            fullDate.charAt(0).toUpperCase();
             item.fulldate = fullDate;
             item.date = date;
-            const user = await User.findById(id);
             user.pagescount = user.pagescount + item.book.numberPages;
             user.timeline.push(item);
             user.save();
