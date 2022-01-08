@@ -163,7 +163,22 @@ const controller = {
             item.fulldate = fullDate;
             item.date = date;
             user.pagescount = user.pagescount + item.book.numberPages;
-            user.timeline.push(item);
+
+            for (let i = 0; i < user.timeline.length; i++) {
+                if (user.timeline[i].date === date) {
+                    user.timeline[i].items.push(item);
+                    // user.timeline[index].push(item) no funcionaba por esto
+                    // Esto arregla el error de la fecha
+                    user.markModified("timeline");
+                    user.save();
+                    return responseHTTP.success(req, res, user, 200);
+                }
+            }
+            user.timeline.push({
+                items: [item],
+                date,
+                fullDate,
+            });
             user.save();
             return responseHTTP.success(req, res, user, 200);
         } catch (error) {
