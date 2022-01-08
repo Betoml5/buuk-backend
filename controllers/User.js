@@ -122,6 +122,7 @@ const controller = {
                 authors: item.volumeInfo.authors,
                 images: item.volumeInfo.imageLinks,
                 lang: item.volumeInfo.language,
+                category: item.volumeInfo.categories[0],
                 cover: `https://covers.openlibrary.org/b/isbn/${item.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
             };
             const user = await User.findById(id);
