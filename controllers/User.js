@@ -60,6 +60,9 @@ const controller = {
             const userUpdated = await User.findByIdAndUpdate(id, user, {
                 new: true,
             });
+            userUpdated.password = user.password;
+            userUpdated.markModified("password");
+            userUpdated.save();
             return responseHTTP.success(req, res, userUpdated, 200);
         } catch (error) {
             console.log(error);
@@ -103,10 +106,10 @@ const controller = {
                         { user: user._id },
                         config.authJwtSecret
                     );
+                    delete body.password;
                     return responseHTTP.success(req, res, { token, body }, 200);
                 });
             } catch (error) {
-                console.log(error);
                 return responseHTTP.error(req, res, error, 500);
             }
         })(req, res, next);

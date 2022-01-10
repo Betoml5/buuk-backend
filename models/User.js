@@ -20,6 +20,17 @@ const User = new Schema({
 // OJO SI USAMOS ARROW FUNCTIONS, VAMOS A TENER PROBLEMAS CON THIS.
 User.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
+    try {
+        const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+        this.password = await bcrypt.hash(this.password, salt);
+        return next();
+    } catch (error) {
+        return next(error);
+    }
+});
+
+User.pre("updateOne", async function (next) {
+    if (this.isModified()) next();
 
     try {
         const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
