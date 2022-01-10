@@ -14,10 +14,21 @@ const controller = {
                 return responseHTTP.error(
                     req,
                     res,
-                    { message: "Missing information" },
+                    { message: "Falta informacion" },
                     400
                 );
             }
+
+            const checkUser = await User.findOne({ email: user.email });
+            if (checkUser) {
+                return responseHTTP.error(
+                    req,
+                    res,
+                    { message: "Este correo ya existe" },
+                    500
+                );
+            }
+
             const userCreated = await User.create(user);
             return responseHTTP.success(req, res, userCreated, 201);
         } catch (error) {
