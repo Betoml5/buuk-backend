@@ -1,34 +1,34 @@
 const statusMessages = {
-  200: "Done",
-  201: "Created",
-  400: "Invalid format",
-  500: "Internal error",
+    200: "Done",
+    201: "Created",
+    400: "Invalid format",
+    500: "Internal error",
 };
 
 const success = (req, res, message, status) => {
-  let statusCode = status; // 200
-  let statusMessage = message; // Todo bien
+    let statusCode = status; // 200
+    let statusMessage = message; // Todo bien
 
-  if (!status) status = 200;
+    if (!status) status = 200;
 
-  if (!message) statusMessage = statusMessages[status];
+    if (!message) statusMessage = statusMessages[status];
 
-  res.status(statusCode).send({
-    error: "",
-    body: statusMessage,
-  });
+    res.status(statusCode).send({
+        error: "",
+        body: statusMessage,
+    });
 };
 
 const error = (req, res, message, status, details) => {
-  console.error("[response error] " + details);
+    console.error("[response error] " + message.message);
 
-  res.status(status || 500).send({
-    error: message,
-    body: "",
-  });
+    res.status(status || 500).send({
+        error: message,
+        body: "",
+    });
 };
 
 module.exports = {
-  success,
-  error,
+    success,
+    error,
 };

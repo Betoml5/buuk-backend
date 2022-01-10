@@ -6,6 +6,7 @@ const User = new Schema({
     username: { type: String, require: true, unique: true },
     email: { type: String, require: true, unique: true },
     password: { type: String, require: true, minlength: 8 },
+    image: { type: String, required: false, default: "" },
     whishlist: { type: [] },
     readedbooks: { type: [] },
     library: { type: [] },
@@ -32,5 +33,11 @@ User.pre("save", async function (next) {
 User.validatePassword = async function validatePassword(password) {
     return bcrypt.compare(password, this.password);
 };
+
+User.static("findOneOrCreate", async function findOneOrCreate(condition, doc) {
+    const one = await this.findOne(condition);
+
+    return one || this.create(doc);
+});
 
 module.exports = model("User", User);

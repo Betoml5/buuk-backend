@@ -1,6 +1,7 @@
 const { config } = require("../config");
 const axios = require("axios");
 const responseHTTP = require("../network/response");
+const boom = require("@hapi/boom");
 
 const controller = {
     bestSellers: async (req, res) => {
@@ -18,7 +19,7 @@ const controller = {
                     response.data.results.lists,
                     200
                 );
-            }, 5000);
+            }, 1000);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);
         }
@@ -26,25 +27,62 @@ const controller = {
     searchBook: async (req, res) => {
         const { title } = req.query;
         try {
-            const {
-                data: { docs },
-            } = await axios.get(
-                `${config.openlibraryApi}/search.json?title=${title}`
+            const response = await axios.get(
+                `${config.googleApi}/volumes?q=${title}&langRestrict=es`
             );
 
-            const books = [];
-            // const bookCover = `https://covers.openlibrary.org/b/id/${firstDoc.cover_i}-L.jpg`;
-            for (let i = 0; i < docs.length; i++) {
-                if (docs[i].cover_i !== undefined) {
-                    books.push({
-                        id: i,
-                        work_id: docs[i].key,
-                        title: docs[i].title,
-                        subtitle: docs[i].subtitle | " ",
-                        cover: `https://covers.openlibrary.org/b/id/${docs[i].cover_i}-L.jpg`,
-                    });
-                }
+            if (response.data.items.length === 0) {
+                return responseHTTP.error(req, res, {
+                    message: "No results found",
+                    totalItems: 0,
+                });
             }
+
+            const books = response.data.items.map((book) => ({
+                id: book.id,
+                selfLink: book.selfLink,
+                title: book.volumeInfo.title,
+                description: book.volumeInfo.description,
+                publishedDate: book.volumeInfo.publishedDate,
+                pageCount: book.volumeInfo.pageCount,
+                avgRating: book.volumeInfo.averageRating,
+                authors: book.volumeInfo.authors,
+                images: book.volumeInfo.imageLinks,
+                lang: book.volumeInfo.language,
+                cover: `https://covers.openlibrary.org/b/isbn/${book.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
+            }));
+
+            return responseHTTP.success(req, res, books, 200);
+        } catch (error) {
+            return responseHTTP.error(req, res, error, 500);
+        }
+    },
+    searchBooksBySubject: async (req, res) => {
+        const { q } = req.query;
+        try {
+            const response = await axios.get(
+                `${config.googleApi}/volumes?q=subject:${q}&langRestrict=es&orderBy=newest`
+            );
+            if (response.data.totalItems === 0) {
+                return responseHTTP.error(req, res, {
+                    message: "No results",
+                    totalItems: 0,
+                });
+            }
+
+            const books = response.data.items.map((book) => ({
+                id: book.id,
+                selfLink: book.selfLink,
+                title: book.volumeInfo.title,
+                description: book.volumeInfo.description,
+                publishedDate: book.volumeInfo.publishedDate,
+                pageCount: book.volumeInfo.pageCount,
+                avgRating: book.volumeInfo.averageRating,
+                authors: book.volumeInfo.authors,
+                images: book.volumeInfo.imageLinks,
+                lang: book.volumeInfo.language,
+                cover: `https://covers.openlibrary.org/b/isbn/${book.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
+            }));
 
             return responseHTTP.success(req, res, books, 200);
         } catch (error) {
