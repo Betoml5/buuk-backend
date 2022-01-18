@@ -24,7 +24,7 @@ const controller = {
                 const response = await axios.request(options);
                 const news = response.data;
                 return responseHTTP.success(req, res, news, 200);
-            }, 2000);
+            }, 1000);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);
         }
@@ -45,9 +45,8 @@ const controller = {
                 const response = await axios.request(options);
                 const news = response.data;
                 return responseHTTP.success(req, res, news, 200);
-            }, 5000);
+            }, 1000);
         } catch (error) {
-            console.log(error.message);
             return responseHTTP.error(req, res, error, 500);
         }
     },

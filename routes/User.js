@@ -1,17 +1,25 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/User");
-const passport = require("passport");
+const middlewares = require("../middlewares");
 
-router.get("/all", controller.find);
+router.get("/all", middlewares.verifyAuth, controller.find);
 router.get("/user/:id", controller.findOne);
-router.put("/update/:id", controller.update);
-router.delete("/delete/:id", controller.delete);
+router.put("/update/:id", middlewares.verifyAuth, controller.update);
+router.delete("/delete/:id", middlewares.verifyAuth, controller.delete);
 
 router.post("/login", controller.login);
 router.post("/create", controller.create);
-router.patch("/timeline/:id", controller.addTimelineItem);
-router.post("/library/:id", controller.addToLibrary);
-router.delete("/library/:id", controller.removeFromLibrary);
+router.patch(
+    "/timeline/:id",
+    middlewares.verifyAuth,
+    controller.addTimelineItem
+);
+router.post("/library/:id", middlewares.verifyAuth, controller.addToLibrary);
+router.delete(
+    "/library/:id",
+    middlewares.verifyAuth,
+    controller.removeFromLibrary
+);
 
 module.exports = router;

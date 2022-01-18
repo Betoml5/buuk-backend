@@ -47,7 +47,6 @@ const controller = {
     update: async (req, res) => {
         const { user } = req.body;
         const { id } = req.params;
-        console.log(user.image);
         try {
             if (!user) {
                 return responseHTTP.error(
@@ -60,9 +59,11 @@ const controller = {
             const userUpdated = await User.findByIdAndUpdate(id, user, {
                 new: true,
             });
+            userUpdated.password = user.password;
+            userUpdated.markModified("password");
+            userUpdated.save();
             return responseHTTP.success(req, res, userUpdated, 200);
         } catch (error) {
-            console.log(error);
             return responseHTTP.error(req, res, error, 500);
         }
     },
@@ -91,8 +92,8 @@ const controller = {
                     return responseHTTP.error(
                         req,
                         res,
-                        { message: "Invalid password or email" },
-                        401
+                        { message: "Contraseña o correo incorrectos" },
+                        403
                     );
                 }
                 req.login(user, { session: false }, async (err) => {
@@ -101,12 +102,23 @@ const controller = {
                     const body = { user };
                     const token = jwt.sign(
                         { user: user._id },
-                        config.authJwtSecret
+                        config.authJwtSecret,
+                        { expiresIn: "1y" }
                     );
-                    return responseHTTP.success(req, res, { token, body }, 200);
+                    const refreshToken = jwt.sign(
+                        { user: user._id },
+                        config.authJwtRefreshSecret,
+                        { expiresIn: "1y" }
+                    );
+
+                    return responseHTTP.success(
+                        req,
+                        res,
+                        { token, refreshToken, body },
+                        200
+                    );
                 });
             } catch (error) {
-                console.log(error);
                 return responseHTTP.error(req, res, error, 500);
             }
         })(req, res, next);
@@ -148,12 +160,13 @@ const controller = {
         const { id } = req.params;
         try {
             const user = await User.findById(id);
-            const bookIndex = user.library.indexOf(bookId);
+            const bookIndex = user.library.findIndex(
+                (item) => item.id === bookId
+            );
             user.library.splice(bookIndex, 1);
-            user.save();
+            user.save({ new: true });
             return responseHTTP.success(req, res, user, 200);
         } catch (error) {
-            console.log(error);
             return responseHTTP.error(req, res, error, 500);
         }
     },
@@ -192,7 +205,6 @@ const controller = {
             user.save();
             return responseHTTP.success(req, res, user, 200);
         } catch (error) {
-            console.log(error);
             return responseHTTP.error(res, res, error, 500);
         }
     },

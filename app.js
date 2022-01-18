@@ -36,5 +36,5 @@ app.use(passport.initialize());
 app.use(`/api/${config.version}/users`, usersRouter);
 app.use(`/api/${config.version}/books`, booksRouter);
 app.use(`/api/${config.version}/news`, newsRouter);
-app.use(`/api/${config.version}`, authRouter);
+app.use(`/api/${config.version}/auth`, authRouter);
 module.exports = app;

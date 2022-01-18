@@ -15,6 +15,7 @@ const config = {
     freeNewsApi: process.env.FREE_NEWS_API,
     freeNewsKey: process.env.FREE_NEWS_KEY,
     authJwtSecret: process.env.AUTH_JWT_SECRET,
+    authJwtRefreshSecret: process.env.AUTH_JWT_REFRESH_SECRET,
     googleApi: process.env.GOOGLE_API,
 };
 
