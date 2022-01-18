@@ -20,6 +20,7 @@ const success = (req, res, message, status) => {
 };
 
 const error = (req, res, message, status, details) => {
+    console.log(details, message);
     console.error("[response error] " + message.message);
 
     res.status(status || 500).send({
