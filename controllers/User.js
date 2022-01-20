@@ -3,7 +3,6 @@ const responseHTTP = require("../network/response");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
-const boom = require("@hapi/boom");
 const { config } = require("../config");
 
 const controller = {
@@ -59,9 +58,6 @@ const controller = {
             const userUpdated = await User.findByIdAndUpdate(id, user, {
                 new: true,
             });
-            // userUpdated.password = user.password;
-            // userUpdated.markModified("password");
-            userUpdated.save();
             return responseHTTP.success(req, res, userUpdated, 200);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);
@@ -76,7 +72,6 @@ const controller = {
             return responseHTTP.error(req, res, error, 500);
         }
     },
-
     find: async (req, res) => {
         try {
             const users = await User.find({});
