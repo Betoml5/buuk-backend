@@ -31,11 +31,15 @@ const controller = {
                 `${config.googleApi}/volumes?q=${title}&langRestrict=es`
             );
 
-            if (response.data.items.length === 0) {
-                return responseHTTP.error(req, res, {
-                    message: "No results found",
-                    totalItems: 0,
-                });
+            console.log(response.data.totalItems);
+
+            if (response.data.totalItems === 0) {
+                return responseHTTP.error(
+                    req,
+                    res,
+                    { message: "No items found", totalItems: 0 },
+                    500
+                );
             }
 
             const books = response.data.items.map((book) => ({
