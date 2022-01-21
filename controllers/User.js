@@ -144,7 +144,7 @@ const controller = {
                     item?.volumeInfo?.categories[0],
                 cover: `https://covers.openlibrary.org/b/isbn/${item.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
             };
-            const user = await User.findById(id);
+            const user = await User.findById(req.user.id);
             user.library.push(book);
             user.save({ new: true });
             return responseHTTP.success(req, res, user, 200);
@@ -154,9 +154,9 @@ const controller = {
     },
     removeFromLibrary: async (req, res) => {
         const { bookId } = req.query;
-        const { id } = req.params;
+        // const { id } = req.params;
         try {
-            const user = await User.findById(id);
+            const user = await User.findById(req.user.id);
             const bookIndex = user.library.findIndex(
                 (item) => item.id === bookId
             );
@@ -169,7 +169,7 @@ const controller = {
     },
     addTimelineItem: async (req, res) => {
         const { item } = req.body;
-        const { id } = req.params;
+        // const { id } = req.params;
         try {
             const options = {
                 weekday: "long",
@@ -177,7 +177,7 @@ const controller = {
                 month: "long",
                 day: "numeric",
             };
-            const user = await User.findById(id);
+            const user = await User.findById(req.user.id);
             const date = new Date().getDate();
             const fullDate = new Date().toLocaleDateString("es-MX", options);
             item.fulldate = fullDate;
