@@ -38,8 +38,6 @@ const controller = {
                 }
             );
         } catch (error) {
-            console.log(error);
-            console.log("error", error.message);
             return responseHTTP.error(req, res, error, 500);
         }
     },

@@ -31,11 +31,15 @@ const controller = {
                 `${config.googleApi}/volumes?q=${title}&langRestrict=es`
             );
 
-            if (response.data.items.length === 0) {
-                return responseHTTP.error(req, res, {
-                    message: "No results found",
-                    totalItems: 0,
-                });
+            console.log(response.data.totalItems);
+
+            if (response.data.totalItems === 0) {
+                return responseHTTP.error(
+                    req,
+                    res,
+                    { message: "No items found", totalItems: 0 },
+                    500
+                );
             }
 
             const books = response.data.items.map((book) => ({
@@ -49,9 +53,11 @@ const controller = {
                 authors: book.volumeInfo.authors,
                 images: book.volumeInfo.imageLinks,
                 lang: book.volumeInfo.language,
+                categories:
+                    book.volumeInfo.categories &&
+                    book?.volumeInfo?.categories[0],
                 cover: `https://covers.openlibrary.org/b/isbn/${book.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
             }));
-
             return responseHTTP.success(req, res, books, 200);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);

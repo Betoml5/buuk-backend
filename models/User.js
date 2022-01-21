@@ -29,15 +29,18 @@ User.pre("save", async function (next) {
     }
 });
 
-User.pre("updateOne", async function (next) {
-    if (this.isModified()) next();
-
+User.pre("findOneAndUpdate", async function (next) {
     try {
-        const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
-        this.password = await bcrypt.hash(this.password, salt);
-        return next();
-    } catch (error) {
-        return next(error);
+        if (this._update.password) {
+            const hashed = await bcrypt.hash(
+                this._update.password,
+                SALT_WORK_FACTOR
+            );
+            this._update.password = hashed;
+        }
+        next();
+    } catch (err) {
+        return next(err);
     }
 });
 
