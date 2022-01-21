@@ -91,12 +91,12 @@ const controller = {
                         403
                     );
                 }
+
                 req.login(user, { session: false }, async (err) => {
                     if (err) next(err);
-
                     const body = { user };
                     const token = jwt.sign(
-                        { user: user._id },
+                        { id: user._id },
                         config.authJwtSecret,
                         { expiresIn: "1y" }
                     );
