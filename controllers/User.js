@@ -121,6 +121,7 @@ const controller = {
     addToLibrary: async (req, res) => {
         const { bookId } = req.query;
         const { id } = req.params;
+
         try {
             const response = await axios.get(
                 `${config.googleApi}/volumes/${bookId}`
@@ -138,7 +139,9 @@ const controller = {
                 authors: item.volumeInfo.authors,
                 images: item.volumeInfo.imageLinks,
                 lang: item.volumeInfo.language,
-                // category: item?.volumeInfo?.categories[0],
+                categories:
+                    item.volumeInfo.categories &&
+                    item?.volumeInfo?.categories[0],
                 cover: `https://covers.openlibrary.org/b/isbn/${item.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
             };
             const user = await User.findById(id);
@@ -146,7 +149,6 @@ const controller = {
             user.save({ new: true });
             return responseHTTP.success(req, res, user, 200);
         } catch (error) {
-            console.log(error);
             return responseHTTP.error(req, res, error, 500);
         }
     },

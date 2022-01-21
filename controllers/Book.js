@@ -53,9 +53,11 @@ const controller = {
                 authors: book.volumeInfo.authors,
                 images: book.volumeInfo.imageLinks,
                 lang: book.volumeInfo.language,
+                categories:
+                    book.volumeInfo.categories &&
+                    book?.volumeInfo?.categories[0],
                 cover: `https://covers.openlibrary.org/b/isbn/${book.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
             }));
-
             return responseHTTP.success(req, res, books, 200);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);
