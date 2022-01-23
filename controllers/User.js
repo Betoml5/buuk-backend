@@ -168,7 +168,7 @@ const controller = {
     },
     addTimelineItem: async (req, res) => {
         const { item } = req.body;
-        // const { id } = req.params;
+
         try {
             const options = {
                 weekday: "long",
@@ -201,6 +201,7 @@ const controller = {
             user.save();
             return responseHTTP.success(req, res, user, 200);
         } catch (error) {
+            console.log(error);
             return responseHTTP.error(res, res, error, 500);
         }
     },

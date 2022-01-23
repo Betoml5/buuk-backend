@@ -31,8 +31,6 @@ const controller = {
                 `${config.googleApi}/volumes?q=${title}&langRestrict=es`
             );
 
-            console.log(response.data.totalItems);
-
             if (response.data.totalItems === 0) {
                 return responseHTTP.error(
                     req,
