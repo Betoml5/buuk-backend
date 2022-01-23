@@ -120,7 +120,6 @@ const controller = {
     },
     addToLibrary: async (req, res) => {
         const { bookId } = req.query;
-        const { id } = req.params;
 
         try {
             const response = await axios.get(
