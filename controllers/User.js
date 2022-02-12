@@ -91,12 +91,12 @@ const controller = {
                         403
                     );
                 }
+
                 req.login(user, { session: false }, async (err) => {
                     if (err) next(err);
-
                     const body = { user };
                     const token = jwt.sign(
-                        { user: user._id },
+                        { id: user._id },
                         config.authJwtSecret,
                         { expiresIn: "1y" }
                     );
@@ -120,7 +120,6 @@ const controller = {
     },
     addToLibrary: async (req, res) => {
         const { bookId } = req.query;
-        const { id } = req.params;
 
         try {
             const response = await axios.get(
@@ -144,7 +143,7 @@ const controller = {
                     item?.volumeInfo?.categories[0],
                 cover: `https://covers.openlibrary.org/b/isbn/${item.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
             };
-            const user = await User.findById(id);
+            const user = await User.findById(req.user.id);
             user.library.push(book);
             user.save({ new: true });
             return responseHTTP.success(req, res, user, 200);
@@ -155,9 +154,9 @@ const controller = {
     },
     removeFromLibrary: async (req, res) => {
         const { bookId } = req.query;
-        const { id } = req.params;
+        // const { id } = req.params;
         try {
-            const user = await User.findById(id);
+            const user = await User.findById(req.user.id);
             const bookIndex = user.library.findIndex(
                 (item) => item.id === bookId
             );
@@ -170,7 +169,7 @@ const controller = {
     },
     addTimelineItem: async (req, res) => {
         const { item } = req.body;
-        const { id } = req.params;
+
         try {
             const options = {
                 weekday: "long",
@@ -178,7 +177,7 @@ const controller = {
                 month: "long",
                 day: "numeric",
             };
-            const user = await User.findById(id);
+            const user = await User.findById(req.user.id);
             const date = new Date().getDate();
             const fullDate = new Date().toLocaleDateString("es-MX", options);
             item.fulldate = fullDate;
@@ -203,6 +202,7 @@ const controller = {
             user.save();
             return responseHTTP.success(req, res, user, 200);
         } catch (error) {
+            console.log(error);
             return responseHTTP.error(res, res, error, 500);
         }
     },

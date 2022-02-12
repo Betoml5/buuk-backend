@@ -10,16 +10,8 @@ router.delete("/delete/:id", middlewares.verifyAuth, controller.delete);
 
 router.post("/login", controller.login);
 router.post("/create", controller.create);
-router.patch(
-    "/timeline/:id",
-    middlewares.verifyAuth,
-    controller.addTimelineItem
-);
-router.post("/library/:id", middlewares.verifyAuth, controller.addToLibrary);
-router.delete(
-    "/library/:id",
-    middlewares.verifyAuth,
-    controller.removeFromLibrary
-);
+router.patch("/timeline", middlewares.verifyAuth, controller.addTimelineItem);
+router.post("/library", middlewares.verifyAuth, controller.addToLibrary);
+router.delete("/library", middlewares.verifyAuth, controller.removeFromLibrary);
 
 module.exports = router;
