@@ -148,7 +148,6 @@ const controller = {
             user.save({ new: true });
             return responseHTTP.success(req, res, user, 200);
         } catch (error) {
-            console.log(error);
             return responseHTTP.error(req, res, error, 500);
         }
     },
