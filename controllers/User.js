@@ -143,6 +143,7 @@ const controller = {
                     item?.volumeInfo?.categories[0],
                 cover: `https://covers.openlibrary.org/b/isbn/${item.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
             };
+
             const user = await User.findById(req.user.id);
             user.library.push(book);
             user.save({ new: true });
@@ -153,7 +154,7 @@ const controller = {
     },
     removeFromLibrary: async (req, res) => {
         const { bookId } = req.query;
-        // const { id } = req.params;
+
         try {
             const user = await User.findById(req.user.id);
             const bookIndex = user.library.findIndex(
