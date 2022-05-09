@@ -153,7 +153,6 @@ const controller = {
     },
     removeFromLibrary: async (req, res) => {
         const { bookId } = req.query;
-        // const { id } = req.params;
         try {
             const user = await User.findById(req.user.id);
             const bookIndex = user.library.findIndex(
@@ -201,7 +200,6 @@ const controller = {
             user.save();
             return responseHTTP.success(req, res, user, 200);
         } catch (error) {
-            console.log(error);
             return responseHTTP.error(res, res, error, 500);
         }
     },
