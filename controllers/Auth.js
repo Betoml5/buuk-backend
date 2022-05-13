@@ -44,25 +44,49 @@ const controller = {
     },
 
     forgotPassword: async (req, res) => {
-        try {
-            let testAccount = await nodemailer.createTestAccount();
+        const { email } = req.body;
 
+        if (!email) {
+            return responseHTTP.error(
+                req,
+                res,
+                { message: "Missing email" },
+                401
+            );
+        }
+
+        const user = await User.findOne({ email: email });
+        console.log(user.username);
+        if (!user) {
+            return responseHTTP.error(
+                req,
+                res,
+                { message: "Unauthorized" },
+                401
+            );
+        }
+
+        const token = jwt.sign({ id: user._id }, config.authJwtSecret, {
+            expiresIn: "15m",
+        });
+
+        try {
             const transporter = nodemailer.createTransport({
                 host: "smtp.gmail.com",
                 secure: true,
                 port: 465,
                 auth: {
-                    user: "betoml397@gmail.com",
-                    pass: "fzrvdpsieytfemqt",
+                    user: config.gmailEmail,
+                    pass: config.gmailPassword,
                 },
             });
 
             let info = await transporter.sendMail({
-                from: "betoml397@gmail.com", // sender address
-                to: "betoml5@hotmail.com", // list of receivers
-                subject: "Este es un nuevo correo", // Subject line
-                text: "Hola", // plain text body
-                html: "<b>Hola mundo?</b>", // html body
+                from: config.gmailEmail, // sender address
+                to: email, // list of receivers
+                subject: "Recuperacion de contraseña", // Subject line
+                text: `¡Hola! ${email}`, // plain text body
+                html: `<b>Hola ${user.username}  <a href='http://127.0.0.1:5500/index.html?token=${token}'>Ingresa a este link para cambiar tu contrasena</a></b>`, // html body
             });
 
             console.log("Message sent: %s", info.messageId);

@@ -17,6 +17,8 @@ const config = {
     authJwtSecret: process.env.AUTH_JWT_SECRET,
     authJwtRefreshSecret: process.env.AUTH_JWT_REFRESH_SECRET,
     googleApi: process.env.GOOGLE_API,
+    gmailEmail: process.env.GMAIL_EMAIL,
+    gmailPassword: process.env.GMAIL_PASSWORD,
 };
 
 module.exports = { config };
