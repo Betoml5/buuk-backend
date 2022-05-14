@@ -56,7 +56,6 @@ const controller = {
         }
 
         const user = await User.findOne({ email: email });
-        console.log(user.username);
         if (!user) {
             return responseHTTP.error(
                 req,
@@ -98,10 +97,31 @@ const controller = {
 
             return responseHTTP.success(req, res, { message: "OK" }, 200);
         } catch (error) {
-            console.log(error);
+
             return responseHTTP.error(req, res, error, 500);
         }
     },
+
+    changePassword: async (req, res) => {
+
+        const { password, id } = req.body;
+        const { token } = req.params;
+
+        const payload = jwt.verify(token, config.authJwtSecret)
+
+        if (!payload) {
+            return responseHTTP.error(req, res, { message: "Server error" }, 401)
+        }
+
+        try {
+            const user = await User.findById(id);
+            user.password = password;
+            user.save({ new: true });
+            return responseHTTP.success(req, res, user, 200)
+        } catch (error) {
+            return responseHTTP.error(req, res, { message: "Server error" }, 500)
+        }
+    }
 };
 
 module.exports = controller;
