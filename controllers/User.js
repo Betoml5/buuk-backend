@@ -31,6 +31,8 @@ const controller = {
             const userCreated = await User.create(user);
             return responseHTTP.success(req, res, userCreated, 201);
         } catch (error) {
+            console.log(error)
+
             return responseHTTP.error(req, res, error, 500);
         }
     },
