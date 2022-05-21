@@ -3,6 +3,7 @@ const { config } = require("../config");
 const responseHTTP = require("../network/response");
 const User = require("../models/User");
 const nodemailer = require("nodemailer");
+const { serializeUser } = require("passport/lib");
 
 const controller = {
     refreshToken: async (req, res, next) => {
@@ -98,6 +99,19 @@ const controller = {
             return responseHTTP.success(req, res, { message: "OK" }, 200);
         } catch (error) {
             console.log(error);
+            return responseHTTP.error(req, res, error, 500);
+        }
+    },
+
+    changePassword: async () => {
+        const { id } = req.params;
+        const { password } = req.body;
+        try {
+            const user = await User.findById(id);
+            user.password = password;
+            user.save();
+            return responseHTTP(req, res, user, 200);
+        } catch (error) {
             return responseHTTP.error(req, res, error, 500);
         }
     },
