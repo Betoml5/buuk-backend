@@ -3,6 +3,7 @@ const { config } = require("../config");
 const responseHTTP = require("../network/response");
 const User = require("../models/User");
 const nodemailer = require("nodemailer");
+const { serializeUser } = require("passport/lib");
 
 const controller = {
     refreshToken: async (req, res, next) => {
@@ -56,7 +57,6 @@ const controller = {
         }
 
         const user = await User.findOne({ email: email });
-        console.log(user.username);
         if (!user) {
             return responseHTTP.error(
                 req,
@@ -86,7 +86,7 @@ const controller = {
                 to: email, // list of receivers
                 subject: "Recuperacion de contraseña", // Subject line
                 text: `¡Hola! ${email}`, // plain text body
-                html: `<b>Hola ${user.username}  <a href='http://127.0.0.1:5500/index.html?token=${token}'>Ingresa a este link para cambiar tu contrasena</a></b>`, // html body
+                html: `<b>Hola ${user.username}  <a href='https://betoml5.github.io/recovery-page-buuk?token=${token}'>Ingresa a este link para cambiar tu contrasena</a></b>`, // html body
             });
 
             console.log("Message sent: %s", info.messageId);
@@ -99,6 +99,19 @@ const controller = {
             return responseHTTP.success(req, res, { message: "OK" }, 200);
         } catch (error) {
             console.log(error);
+            return responseHTTP.error(req, res, error, 500);
+        }
+    },
+
+    changePassword: async () => {
+        const { id } = req.params;
+        const { password } = req.body;
+        try {
+            const user = await User.findById(id);
+            user.password = password;
+            user.save();
+            return responseHTTP(req, res, user, 200);
+        } catch (error) {
             return responseHTTP.error(req, res, error, 500);
         }
     },
