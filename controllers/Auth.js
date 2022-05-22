@@ -86,7 +86,7 @@ const controller = {
                 to: email, // list of receivers
                 subject: "Recuperacion de contraseña", // Subject line
                 text: `¡Hola! ${email}`, // plain text body
-                html: `<b>Hola ${user.username}  <a href='http://127.0.0.1:5500/index.html?token=${token}'>Ingresa a este link para cambiar tu contrasena</a></b>`, // html body
+                html: `<b>Hola ${user.username}  <a href='https://betoml5.github.io/recovery-page-buuk?token=${token}'>Ingresa a este link para cambiar tu contrasena</a></b>`, // html body
             });
 
             console.log("Message sent: %s", info.messageId);
