@@ -104,16 +104,19 @@ const controller = {
     },
 
     changePassword: async () => {
-        const { id } = req.params;
+        const { token } = req.params;
         const { password } = req.body;
-        try {
-            const user = await User.findById(id);
-            user.password = password;
-            user.save();
-            return responseHTTP(req, res, user, 200);
-        } catch (error) {
-            return responseHTTP.error(req, res, error, 500);
-        }
+
+        const payload = jwt.verify(token);
+        console.log(payload);
+        // try {
+        //     const user = await User.findById(id);
+        //     user.password = password;
+        //     user.save();
+        //     return responseHTTP(req, res, user, 200);
+        // } catch (error) {
+        //     return responseHTTP.error(req, res, error, 500);
+        // }
     },
 };
 
