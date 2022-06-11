@@ -99,7 +99,6 @@ const controller = {
 
             return responseHTTP.success(req, res, { message: "OK" }, 200);
         } catch (error) {
-            console.log(error);
             return responseHTTP.error(req, res, error, 500);
         }
     },
