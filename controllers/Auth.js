@@ -3,7 +3,7 @@ const { config } = require("../config");
 const responseHTTP = require("../network/response");
 const User = require("../models/User");
 const nodemailer = require("nodemailer");
-const { serializeUser } = require("passport/lib");
+const bcrypt = require("bcrypt");
 
 const controller = {
     refreshToken: async (req, res, next) => {
@@ -87,6 +87,7 @@ const controller = {
                 subject: "Recuperacion de contraseña", // Subject line
                 text: `¡Hola! ${email}`, // plain text body
                 html: `<b>Hola ${user.username}  <a href='https://betoml5.github.io/recovery-page-buuk?token=${token}'>Ingresa a este link para cambiar tu contrasena</a></b>`, // html body
+                // html: `<b>Hola ${user.username}  <a href='http://127.0.0.1:5500?token=${token}'>Ingresa a este link para cambiar tu contrasena</a></b>`, // html body
             });
 
             console.log("Message sent: %s", info.messageId);
@@ -98,25 +99,31 @@ const controller = {
 
             return responseHTTP.success(req, res, { message: "OK" }, 200);
         } catch (error) {
-            console.log(error);
             return responseHTTP.error(req, res, error, 500);
         }
     },
 
-    changePassword: async () => {
-        const { token } = req.params;
+    changePassword: async (req, res) => {
         const { password } = req.body;
+        const payload = jwt.verify(req.query.token, config.authJwtSecret);
+        try {
+            const user = await User.findById(payload.id);
+            if (!user) {
+                return responseHTTP.error(
+                    req,
+                    res,
+                    { message: "Not user found" },
+                    200
+                );
+            }
 
-        const payload = jwt.verify(token);
-        console.log(payload);
-        // try {
-        //     const user = await User.findById(id);
-        //     user.password = password;
-        //     user.save();
-        //     return responseHTTP(req, res, user, 200);
-        // } catch (error) {
-        //     return responseHTTP.error(req, res, error, 500);
-        // }
+            user.password = password;
+            user.save({ new: true });
+
+            return responseHTTP.success(req, res, user, 200);
+        } catch (error) {
+            return responseHTTP.error(req, res, error, 500);
+        }
     },
 };
 
