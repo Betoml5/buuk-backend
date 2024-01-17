@@ -6,6 +6,9 @@ import userRouter from "./components/user/router";
 import authRouter from "./components/auth/router";
 import bookRouter from "./components/book/router";
 import libraryRouter from "./components/library/router";
+import timelineRouter from "./components/timeline/router";
+import wishlistRouter from "./components/wishlist/router";
+
 import "./middlewares/passport";
 import cors from "cors";
 
@@ -37,6 +40,14 @@ const paths = [
     {
         path: "/api/v1/library",
         router: libraryRouter,
+    },
+    {
+        path: "/api/v1/timeline",
+        router: timelineRouter,
+    },
+    {
+        path: "/api/v1/wishlist",
+        router: wishlistRouter,
     },
 ];
 

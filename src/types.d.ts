@@ -36,6 +36,14 @@ export type TBook = {
     searchInfo: SearchInfo;
 };
 
+export type TTimeline = {
+    id: number;
+    bookISBN: string;
+    userId: number;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
 export type AccessInfo = {
     country: string;
     viewability: string;

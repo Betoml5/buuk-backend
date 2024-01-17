@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE `user` ALTER COLUMN `image` DROP DEFAULT,
-    ALTER COLUMN `pagesCount` DROP DEFAULT,
-    ALTER COLUMN `hoursCount` DROP DEFAULT,
-    ALTER COLUMN `wordsCount` DROP DEFAULT;
