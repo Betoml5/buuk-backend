@@ -8,7 +8,7 @@ class Controller {
             const { bookISBN } = req.body;
             const updatedLibrary = await store.insert({
                 bookISBN,
-                userId: 6,
+                userId: 4,
             });
             return response.success(req, res, updatedLibrary, 201);
         } catch (error) {

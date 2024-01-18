@@ -13,7 +13,7 @@ class Controller {
 
             const updatedLibrary = await store.insert({
                 bookISBN,
-                userId: 1,
+                userId: 4,
             });
 
             return response.success(req, res, updatedLibrary, 201);
@@ -24,8 +24,10 @@ class Controller {
 
     static async getById(req: Request, res: Response) {
         try {
-            const { user } = req as any;
-            const library = await store.getById({ userId: user.id });
+            // const { user } = req as any;
+            const library = await store.getById({ userId: 4 });
+            if (!library)
+                return response.error(req, res, "Library not found", 404);
             return response.success(req, res, library, 200);
         } catch (error) {
             return response.error(req, res, error, 500);

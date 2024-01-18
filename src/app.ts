@@ -35,42 +35,35 @@ app.use(
     })
 );
 
-// const paths = [
-//     {
-//         path: "/api/v1/auth",
-//         router: authRouter,
-//     },
-//     {
-//         path: "/api/v1/user",
-//         router: userRouter,
-//     },
-//     {
-//         path: "/api/v1/book",
-//         router: bookRouter,
-//     },
-//     {
-//         path: "/api/v1/library",
-//         router: libraryRouter,
-//     },
-//     {
-//         path: "/api/v1/timeline",
-//         router: timelineRouter,
-//     },
-//     {
-//         path: "/api/v1/wishlist",
-//         router: wishlistRouter,
-//     },
-// ];
+const paths = [
+    {
+        path: "/api/v1/auth",
+        router: authRouter,
+    },
+    {
+        path: "/api/v1/user",
+        router: userRouter,
+    },
+    {
+        path: "/api/v1/book",
+        router: bookRouter,
+    },
+    {
+        path: "/api/v1/library",
+        router: libraryRouter,
+    },
+    {
+        path: "/api/v1/timeline",
+        router: timelineRouter,
+    },
+    {
+        path: "/api/v1/wishlist",
+        router: wishlistRouter,
+    },
+];
 
-app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/user", userRouter);
-app.use("/api/v1/book", bookRouter);
-app.use("/api/v1/library", libraryRouter);
-app.use("/api/v1/timeline", timelineRouter);
-app.use("/api/v1/wishlist", wishlistRouter);
-
-// paths.forEach((path) => {
-//     app.use(path.path, path.router);
-// });
+paths.forEach((path) => {
+    app.use(path.path, path.router);
+});
 
 export default app;
