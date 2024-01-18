@@ -16,7 +16,7 @@ model User {
     username   String
     password   String
     image      String     @default("")
-    whishlist  Wishlist[]
+    wishlist   Wishlist[]
     readlist   Readlist[]
     library    Library[]
     timeline   Timeline[]
@@ -59,6 +59,6 @@ model Timeline {
     user      User     @relation(fields: [userId], references: [id])
     userId    Int
     bookISBN  String
-    createdAt DateTime @default(now()) @db.Date
+    createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }

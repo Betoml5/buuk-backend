@@ -11,7 +11,7 @@ class Controller {
 
             const updatedTimeLine = await store.insert({
                 bookISBN,
-                userId: 6,
+                userId: 1,
             });
             return response.success(req, res, updatedTimeLine, 201);
         } catch (error) {
@@ -20,7 +20,7 @@ class Controller {
     }
     static async getById(req: Request, res: Response) {
         try {
-            const timeline = await store.getById({ userId: 6 });
+            const timeline = await store.getById({ userId: 1 });
 
             const groupByDate = R.groupBy((item: TTimeline) => {
                 const date = new Date(item.createdAt);

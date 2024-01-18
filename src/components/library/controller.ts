@@ -13,7 +13,7 @@ class Controller {
 
             const updatedLibrary = await store.insert({
                 bookISBN,
-                userId: 6,
+                userId: 1,
             });
 
             return response.success(req, res, updatedLibrary, 201);

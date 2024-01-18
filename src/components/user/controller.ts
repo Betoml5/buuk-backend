@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-
+import { UserSchema } from "../../validations";
 import responseHTTP from "../../network/response";
 // import axios from "axios";
 // import config from "../../config";
@@ -9,12 +9,11 @@ import store from "./store";
 class Controller {
     static async create(req: Request, res: Response) {
         const { user } = req.body;
+        const { error } = UserSchema.validate(user);
+        console.log(error);
+        if (error) return responseHTTP.error(req, res, error.message, 400);
 
         try {
-            if (!user) {
-                throw new Error("No data provided to create user");
-            }
-
             const newUser = await store.insert({
                 user,
             });
@@ -27,6 +26,8 @@ class Controller {
         const { id } = req.params;
         try {
             const user = await store.getById({ id: Number(id) });
+            if (!user)
+                return responseHTTP.error(req, res, "User not found", 404);
             return responseHTTP.success(req, res, user, 200);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);

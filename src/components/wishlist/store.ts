@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import prisma from "../../database/connection";
 
 class Store {
@@ -9,28 +10,30 @@ class Store {
         userId: number;
     }) {
         try {
-            const wishlist = await prisma.wishlist.create({
+            return await prisma.wishlist.create({
                 data: {
                     bookISBN,
                     userId,
                 },
             });
-            return wishlist;
-        } catch (error) {
-            throw error;
+        } catch (error: any) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === "P2002")
+                    throw new Error("Book already exists in wishlist");
+            }
+            throw new Error(`Error at trying to create wishlist ${error}`);
         }
     }
 
     static async getById({ userId }: { userId: number }) {
         try {
-            const wishlist = await prisma.wishlist.findMany({
+            return await prisma.wishlist.findMany({
                 where: {
                     userId,
                 },
             });
-            return wishlist;
         } catch (error) {
-            throw error;
+            throw new Error(`Error at trying to get wishlist ${error}`);
         }
     }
 }

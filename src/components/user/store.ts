@@ -9,7 +9,7 @@ class Store {
                     library: true,
                     readlist: true,
                     timeline: true,
-                    whishlist: true,
+                    wishlist: true,
                 },
             });
         } catch (error) {
@@ -27,7 +27,7 @@ class Store {
                     library: true,
                     readlist: true,
                     timeline: true,
-                    whishlist: true,
+                    wishlist: true,
                 },
             });
         } catch (error) {
