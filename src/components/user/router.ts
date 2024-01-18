@@ -4,6 +4,7 @@ import { middlewares } from "../../middlewares/isAuth";
 import encrypt from "../../middlewares/encrypt";
 
 const router = express.Router();
+// #swagger.tags = ['User']
 router.post("/", encrypt, controller.create);
 router.get("/:id", controller.getById);
 router.get("/", controller.get);
