@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import response from "../../network/response";
 import store from "./store";
+import { TUserJwt } from "../../types";
 
 class Controller {
     static async create(req: Request, res: Response) {
+        const user = req.user as TUserJwt;
         try {
             const { bookISBN } = req.body;
 
@@ -13,7 +15,7 @@ class Controller {
 
             const updatedLibrary = await store.insert({
                 bookISBN,
-                userId: 4,
+                userId: user.id,
             });
 
             return response.success(req, res, updatedLibrary, 201);
@@ -24,8 +26,8 @@ class Controller {
 
     static async getById(req: Request, res: Response) {
         try {
-            // const { user } = req as any;
-            const library = await store.getById({ userId: 4 });
+            const user = req.user as TUserJwt;
+            const library = await store.getById({ userId: user.id });
             if (!library)
                 return response.error(req, res, "Library not found", 404);
             return response.success(req, res, library, 200);

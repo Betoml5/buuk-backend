@@ -1,12 +1,20 @@
 import axios from "axios";
 import config from "../config";
-import { TBook } from "../types";
+import { IBook, IBookDetail } from "../types";
 
 class BookService {
-    static async getByName({ name }: { name: string }): Promise<TBook[]> {
+    static async getByQuery({
+        query,
+        maxResults = 10,
+        startIndex = 0,
+    }: {
+        query: string;
+        maxResults: number;
+        startIndex: number;
+    }): Promise<IBook[]> {
         try {
             const response = await axios.get(
-                `${config.googleApi}/volumes?q=${name}&langRestrict=es`
+                `${config.googleApi}/volumes?q=${query}&langRestrict=es&orderBy=newest&maxResults=${maxResults}&startIndex=${startIndex}`
             );
             return response.data;
         } catch (error: any) {
@@ -16,12 +24,16 @@ class BookService {
 
     static async getBySubject({
         subject,
+        maxResults = 10,
+        startIndex = 0,
     }: {
         subject: string;
-    }): Promise<TBook[]> {
+        maxResults: number;
+        startIndex: number;
+    }): Promise<IBook[]> {
         try {
             const response = await axios.get(
-                `${config.googleApi}/volumes?q=subject:${subject}&langRestrict=es&orderBy=newest`
+                `${config.googleApi}/volumes?q=subject:${subject}&langRestrict=es&orderBy=newest&maxResults=${maxResults}&startIndex=${startIndex}`
             );
             return response.data;
         } catch (error: any) {
@@ -29,7 +41,7 @@ class BookService {
         }
     }
 
-    static async getBookById({ id }: { id: string }): Promise<TBook> {
+    static async getById({ id }: { id: string }): Promise<IBookDetail> {
         try {
             const response = await axios.get(
                 `${config.googleApi}/volumes/${id}`

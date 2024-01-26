@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `timeline` ADD COLUMN `pages` INTEGER NOT NULL DEFAULT 0;

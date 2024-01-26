@@ -17,13 +17,25 @@ class Store {
         }
     }
 
-    static async getById({ id }: { id: number; excludePassword?: boolean }) {
+    static async getById({
+        id,
+        excludePassword,
+    }: {
+        id: number;
+        excludePassword?: boolean;
+    }) {
         try {
             return await prisma.user.findUnique({
                 where: {
                     id: id,
                 },
-                include: {
+                select: {
+                    id: true,
+                    email: true,
+                    username: true,
+                    password: !excludePassword,
+                    createdAt: true,
+                    updatedAt: true,
                     library: true,
                     readlist: true,
                     timeline: true,

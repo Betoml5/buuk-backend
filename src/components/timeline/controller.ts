@@ -1,17 +1,20 @@
-import { Request, Response } from "express";
+import R from "ramda";
 import store from "./store";
 import response from "../../network/response";
-import R from "ramda";
-import { TTimeline } from "../../types";
+import { TUserJwt } from "../../types";
+import { Request, Response } from "express";
+import BookService from "../../services/book";
 
 class Controller {
     static async create(req: Request, res: Response) {
+        const user = req.user as TUserJwt;
         try {
-            const { bookISBN } = req.body;
+            const { bookId, pages } = req.body;
 
             const updatedTimeLine = await store.insert({
-                bookISBN,
-                userId: 4,
+                bookId,
+                userId: user.id,
+                pages,
             });
 
             return response.success(req, res, updatedTimeLine, 201);
@@ -20,16 +23,37 @@ class Controller {
         }
     }
     static async getById(req: Request, res: Response) {
+        const user = req.user as TUserJwt;
         try {
-            const timeline = await store.getById({ userId: 4 });
+            const timeline = await store.getById({ userId: user.id });
+            //fetch only once per book id because if the user has read the same book multiple times
+            // we should not fetch the same book multiple times
+            const booksIds = timeline.map((item) => item.bookId);
+            const uniqueBooksIds = R.uniq(booksIds);
+            const books = await Promise.all(
+                uniqueBooksIds.map((id) => BookService.getById({ id }))
+            );
 
-            const groupByDate = R.groupBy((item: TTimeline) => {
-                const date = new Date(item.createdAt);
-                return date.toISOString().split("T")[0];
+            const timelineWithBooks = timeline.map((item) => {
+                const book = books.find((book) => book.id === item.bookId);
+                return {
+                    ...item,
+                    book,
+                };
             });
-            const groupByDateArray = groupByDate(timeline);
+            const groupedByDate = R.groupBy(
+                (item) => item.createdAt.toISOString().split("T")[0],
+                timelineWithBooks
+            );
 
-            return response.success(req, res, groupByDateArray, 200);
+            const flattened = Object.keys(groupedByDate).map((key) => {
+                return {
+                    date: key,
+                    books: groupedByDate[key],
+                };
+            });
+
+            return response.success(req, res, flattened, 200);
         } catch (error) {
             return response.error(req, res, error, 500);
         }

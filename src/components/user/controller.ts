@@ -4,13 +4,13 @@ import responseHTTP from "../../network/response";
 // import axios from "axios";
 // import config from "../../config";
 import store from "./store";
+import { TUserJwt } from "../../types";
 // import BookService from "../../services/book";
 
 class Controller {
     static async create(req: Request, res: Response) {
         const { user } = req.body;
         const { error } = UserSchema.validate(user);
-        console.log(error);
         if (error) return responseHTTP.error(req, res, error.message, 400);
 
         try {
@@ -64,6 +64,19 @@ class Controller {
         try {
             const users = await store.get();
             return responseHTTP.success(req, res, users, 200);
+        } catch (error) {
+            return responseHTTP.error(req, res, error, 500);
+        }
+    }
+
+    static async me(req: Request, res: Response) {
+        const user = req.user as TUserJwt;
+        try {
+            const me = await store.getById({
+                id: user.id,
+                excludePassword: true,
+            });
+            return responseHTTP.success(req, res, me, 200);
         } catch (error) {
             return responseHTTP.error(req, res, error, 500);
         }

@@ -2,17 +2,20 @@ import prisma from "../../database/connection";
 
 class Store {
     static async insert({
-        bookISBN,
+        bookId,
         userId,
+        pages,
     }: {
-        bookISBN: string;
+        bookId: string;
         userId: number;
+        pages: number;
     }) {
         try {
             const updatedTimeLine = await prisma.timeline.create({
                 data: {
-                    bookISBN,
+                    bookId,
                     userId,
+                    pages,
                 },
             });
             return updatedTimeLine;

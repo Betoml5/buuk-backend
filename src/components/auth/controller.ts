@@ -112,7 +112,7 @@ class Controller {
                     typeof tokenInfo === "object" ? tokenInfo?.type : undefined,
             };
 
-            const token = jwt.sign(payload, config.authJwtRefreshSecret, {
+            const token = jwt.sign(payload, config.authJwtSecret, {
                 expiresIn: 84000,
             });
             return responseHTTP.success(req, res, { token }, 200);
