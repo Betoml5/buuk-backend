@@ -6,6 +6,11 @@ import encrypt from "../../middlewares/encrypt";
 const router = express.Router();
 // #swagger.tags = ['User']
 router.get("/me", middlewares.isAuthenticated, controller.me);
+router.get(
+    "/recommended",
+    middlewares.isAuthenticated,
+    controller.getRecommendations
+);
 router.post("/", encrypt, controller.create);
 router.get("/:id", controller.getById);
 router.get("/", controller.get);

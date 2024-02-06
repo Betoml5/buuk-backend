@@ -5,6 +5,9 @@ import responseHTTP from "../../network/response";
 // import config from "../../config";
 import store from "./store";
 import { TUserJwt } from "../../types";
+import BookService from "../../services/book";
+import timelineStore from "../timeline/store";
+import libraryStore from "../library/store";
 // import BookService from "../../services/book";
 
 class Controller {
@@ -68,7 +71,6 @@ class Controller {
             return responseHTTP.error(req, res, error, 500);
         }
     }
-
     static async me(req: Request, res: Response) {
         const user = req.user as TUserJwt;
         try {
@@ -81,108 +83,85 @@ class Controller {
             return responseHTTP.error(req, res, error, 500);
         }
     }
+    static async getRecommendations(req: Request, res: Response) {
+        const user = req.user as TUserJwt;
+        try {
+            const userFound = await store.getById({ id: user.id });
+            const library = userFound?.library;
+            if (!library) {
+                const randomBooks = await BookService.getRandomBooks();
+                return responseHTTP.success(req, res, randomBooks, 200);
+            }
+            const fetchedBooks = await Promise.all(
+                library.map((book) => BookService.getById({ id: book.bookId }))
+            );
 
-    // static async addToLibrary(req: Request, res: Response) {
-    //     const { bookId } = req.query;
-    //     const userId = req.user.id;
+            const categories = fetchedBooks.map(
+                (item) => item.volumeInfo.categories
+            );
+            const categoriesArray = Array.from(new Set(categories.flat()));
 
-    //     try {
-    //         const response = await axios.get(
-    //             `${config.googleApi}/volumes/${bookId}`
-    //         );
-    //         const item = response.data;
+            //remove similar categories
 
-    //         const book = {
-    //             id: item.id,
-    //             selfLink: item.selfLink,
-    //             title: item.volumeInfo.title,
-    //             description: item.volumeInfo.description,
-    //             publishedDate: item.volumeInfo.publishedDate,
-    //             pageCount: item.volumeInfo.pageCount,
-    //             avgRating: item.volumeInfo.averageRating,
-    //             authors: item.volumeInfo.authors,
-    //             images: item.volumeInfo.imageLinks,
-    //             lang: item.volumeInfo.language,
-    //             categories:
-    //                 item.volumeInfo.categories &&
-    //                 item?.volumeInfo?.categories[0],
-    //             cover: `https://covers.openlibrary.org/b/isbn/${item.volumeInfo?.industryIdentifiers[0].identifier}-L.jpg`,
-    //         };
+            const categoriesArrayFiltered = categoriesArray.filter(
+                (category) => {
+                    const firstWord = category.split(" ")[0];
+                    return !categoriesArray.some(
+                        (categoryStr) =>
+                            categoryStr.includes(firstWord) &&
+                            categoryStr !== category
+                    );
+                }
+            );
 
-    //         const user = await User.findById(req.user.id);
-    //         user.library.push(book);
-    //         user.save({ new: true });
-    //         return responseHTTP.success(req, res, user, 200);
-    //     } catch (error) {
-    //         return responseHTTP.error(req, res, error, 500);
-    //     }
-    // }
-    // static async removeFromLibrary(req: Request, res: Response) {
-    //     const { bookId } = req.query;
-    //     try {
-    //         const user = await User.findById(req.user.id);
+            const booksFiltered = await Promise.all(
+                categoriesArrayFiltered.map((category) =>
+                    BookService.getBySubject({
+                        subject: category,
+                        maxResults: 1,
+                        startIndex: 0,
+                    })
+                )
+            );
 
-    //         const bookIndex = user.library.findIndex(
-    //             (item) => item.id === bookId
-    //         );
-    //         user.library.splice(bookIndex, 1);
-    //         user.save({ new: true });
-    //         return responseHTTP.success(req, res, user, 200);
-    //     } catch (error) {
-    //         return responseHTTP.error(req, res, error, 500);
-    //     }
-    // }
-    // static async addTimelineItem(req: Request, res: Response) {
-    //     const { item } = req.body;
+            const resultsWithoutEmptyItems = booksFiltered
+                .filter((item: any) => item.totalItems > 0)
+                .map((item: any) => item.items[0]);
 
-    //     try {
-    //         const options = {
-    //             weekday: "long",
-    //             year: "numeric",
-    //             month: "long",
-    //             day: "numeric",
-    //         };
-    //         const user = await User.findById(req.user.id);
-    //         const date = new Date().getDate();
-    //         const fullDate = new Date().toLocaleDateString("es-MX", options);
-    //         item.fulldate = fullDate;
-    //         item.date = date;
-    //         user.pagescount = user.pagescount + item.book.numberPages;
+            return responseHTTP.success(
+                req,
+                res,
+                resultsWithoutEmptyItems,
+                200
+            );
+        } catch (error) {
+            return responseHTTP.error(req, res, error, 500);
+        }
+    }
+    static async getLibraryData(req: Request, res: Response) {
+        const user = req.user as TUserJwt;
+        try {
+            const timeline = await timelineStore.getById({ userId: user.id });
+            const sumBookPages = timeline.reduce(
+                (acc, item) => acc + item.pages,
+                0
+            );
+            const booksSum = (await libraryStore.getById({ userId: user.id }))
+                .length;
 
-    //         for (let i = 0; i < user.timeline.length; i++) {
-    //             if (user.timeline[i].date === date) {
-    //                 user.timeline[i].items.push(item);
-    //                 // user.timeline[index].push(item) no funcionaba por esto
-    //                 // Esto arregla el error de la fecha
-    //                 user.markModified("timeline");
-    //                 user.save();
-    //                 return responseHTTP.success(req, res, user, 200);
-    //             }
-    //         }
-    //         user.timeline.push({
-    //             items: [item],
-    //             date,
-    //             fullDate,
-    //         });
-    //         user.save();
-    //         return responseHTTP.success(req, res, user, 200);
-    //     } catch (error) {
-    //         return responseHTTP.error(res, res, error, 500);
-    //     }
-    // }
-    // static async removeTimelineItem(req: Request, res: Response) {
-    //     const { indexOf } = req.params;
-    //     const { itemId } = req.query;
-    //     try {
-    //         const user = await User.findById(id);
-    //         const itemIndex = user.timeline.indexOf(itemId);
-    //         user.timeline.splice(itemIndex, 1);
-    //         user.save();
-    //         return responseHTTP.success(req, res, user, 200);
-    //     } catch (error) {
-    //         return responseHTTP.error(req, res, error, 500);
-    //     }
-    // }
+            return responseHTTP.success(
+                req,
+                res,
+                {
+                    booksSum,
+                    sumBookPages,
+                },
+                200
+            );
+        } catch (error) {
+            return responseHTTP.error(req, res, error, 500);
+        }
+    }
 }
 
 export default Controller;

@@ -31,6 +31,16 @@ class Controller {
             return responseHTTP.error(req, res, error, 500);
         }
     }
+
+    static async getBookById(req: Request, res: Response) {
+        const { id } = req.params;
+        try {
+            const response = await BookService.getById({ id });
+            return responseHTTP.success(req, res, response, 200);
+        } catch (error) {
+            return responseHTTP.error(req, res, error, 500);
+        }
+    }
 }
 
 export default Controller;

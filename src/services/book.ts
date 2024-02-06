@@ -42,9 +42,25 @@ class BookService {
     }
 
     static async getById({ id }: { id: string }): Promise<IBookDetail> {
+        if (!id) {
+            throw new Error("Book id is required");
+        }
+
         try {
             const response = await axios.get(
                 `${config.googleApi}/volumes/${id}`
+            );
+            return response.data;
+        } catch (error: any) {
+            throw new Error(error);
+        }
+    }
+
+    static async getRandomBooks() {
+        try {
+            // get 10 random books
+            const response = await axios.get(
+                `${config.googleApi}/volumes?q=subject:fiction&langRestrict=es&orderBy=newest&maxResults=10`
             );
             return response.data;
         } catch (error: any) {

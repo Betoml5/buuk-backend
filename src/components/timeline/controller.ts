@@ -53,7 +53,13 @@ class Controller {
                 };
             });
 
-            return response.success(req, res, flattened, 200);
+            // order by date desc
+
+            // with R
+
+            const ordered = R.sort(R.descend(R.prop("date")), flattened);
+
+            return response.success(req, res, ordered, 200);
         } catch (error) {
             return response.error(req, res, error, 500);
         }

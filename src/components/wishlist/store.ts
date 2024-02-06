@@ -3,16 +3,16 @@ import prisma from "../../database/connection";
 
 class Store {
     static async insert({
-        bookISBN,
+        bookId,
         userId,
     }: {
-        bookISBN: string;
+        bookId: string;
         userId: number;
     }) {
         try {
             return await prisma.wishlist.create({
                 data: {
-                    bookISBN,
+                    bookId,
                     userId,
                 },
             });

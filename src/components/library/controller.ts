@@ -2,19 +2,20 @@ import { Request, Response } from "express";
 import response from "../../network/response";
 import store from "./store";
 import { TUserJwt } from "../../types";
+import BookService from "../../services/book";
 
 class Controller {
     static async create(req: Request, res: Response) {
         const user = req.user as TUserJwt;
         try {
-            const { bookISBN } = req.body;
+            const { bookId } = req.body;
 
-            if (!bookISBN) {
+            if (!bookId) {
                 throw new Error("No data provided to create library");
             }
 
             const updatedLibrary = await store.insert({
-                bookISBN,
+                bookId,
                 userId: user.id,
             });
 
@@ -30,7 +31,12 @@ class Controller {
             const library = await store.getById({ userId: user.id });
             if (!library)
                 return response.error(req, res, "Library not found", 404);
-            return response.success(req, res, library, 200);
+
+            const books = await Promise.all(
+                library.map((item) => BookService.getById({ id: item.bookId }))
+            );
+
+            return response.success(req, res, books, 200);
         } catch (error) {
             return response.error(req, res, error, 500);
         }

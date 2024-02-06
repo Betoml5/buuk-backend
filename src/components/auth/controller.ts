@@ -36,10 +36,6 @@ class Controller {
                         );
                         res.cookie("refreshToken", refreshToken, {
                             maxAge: 7 * 24 * 60 * 60 * 1000,
-                            sameSite: "none",
-                            secure: true,
-                            httpOnly: true,
-                            path: "/",
                         });
 
                         return responseHTTP.success(
@@ -58,10 +54,6 @@ class Controller {
     static async logout(req: Request, res: Response, _next: NextFunction) {
         res.cookie("refreshToken", "", {
             maxAge: 0,
-            sameSite: "none",
-            secure: true,
-            httpOnly: true,
-            path: "/",
         });
 
         return responseHTTP.success(req, res, { message: "Logout" }, 200);
@@ -73,6 +65,7 @@ class Controller {
     ) {
         try {
             const refreshToken = req.cookies.refreshToken;
+            console.log(req.cookies);
             if (!refreshToken)
                 return responseHTTP.error(req, res, "No token provided", 403);
 
@@ -83,10 +76,6 @@ class Controller {
                     if (err) {
                         res.cookie("refreshToken", "", {
                             maxAge: 0,
-                            sameSite: "none",
-                            secure: true,
-                            httpOnly: true,
-                            path: "/",
                         });
 
                         return responseHTTP.error(
