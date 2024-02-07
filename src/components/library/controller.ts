@@ -14,6 +14,14 @@ class Controller {
                 throw new Error("No data provided to create library");
             }
 
+            // Check if the book exists
+            const isAlreadyAtLibrary = (
+                await store.getById({ userId: user.id })
+            ).find((book) => book.bookId === bookId);
+
+            if (isAlreadyAtLibrary)
+                return response.error(req, res, "Book already at library", 400);
+
             const updatedLibrary = await store.insert({
                 bookId,
                 userId: user.id,
