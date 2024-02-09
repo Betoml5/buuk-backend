@@ -11,6 +11,7 @@ router.get(
     middlewares.isAuthenticated,
     controller.getRecommendations
 );
+router.get("/library", middlewares.isAuthenticated, controller.getLibraryData);
 router.post("/", encrypt, controller.create);
 router.get("/:id", controller.getById);
 router.get("/", controller.get);

@@ -142,19 +142,16 @@ class Controller {
         const user = req.user as TUserJwt;
         try {
             const timeline = await timelineStore.getById({ userId: user.id });
-            const sumBookPages = timeline.reduce(
-                (acc, item) => acc + item.pages,
-                0
-            );
-            const booksSum = (await libraryStore.getById({ userId: user.id }))
+            const pages = timeline.reduce((acc, item) => acc + item.pages, 0);
+            const books = (await libraryStore.getById({ userId: user.id }))
                 .length;
 
             return responseHTTP.success(
                 req,
                 res,
                 {
-                    booksSum,
-                    sumBookPages,
+                    books,
+                    pages,
                 },
                 200
             );
