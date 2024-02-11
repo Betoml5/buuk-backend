@@ -65,7 +65,10 @@ class Controller {
     ) {
         try {
             const refreshToken = req.cookies.refreshToken;
-            console.log(req.cookies);
+            console.log(
+                "🚀 ~ file: controller.ts ~ line 80 ~ Controller ~ refreshToken",
+                refreshToken
+            );
             if (!refreshToken)
                 return responseHTTP.error(req, res, "No token provided", 403);
 

@@ -7,6 +7,7 @@ class Controller {
     static async getBookByQuery(req: Request, res: Response) {
         const { q, maxResults, startIndex } = req.query as any;
         try {
+            console.log(startIndex, maxResults);
             const response = await BookService.getByQuery({
                 query: q,
                 maxResults,
