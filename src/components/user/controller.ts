@@ -88,8 +88,10 @@ class Controller {
         try {
             const userFound = await store.getById({ id: user.id });
             const library = userFound?.library;
+
             if (!library) {
                 const randomBooks = await BookService.getRandomBooks();
+
                 return responseHTTP.success(req, res, randomBooks, 200);
             }
             const fetchedBooks = await Promise.all(

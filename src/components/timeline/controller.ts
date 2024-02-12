@@ -4,6 +4,9 @@ import response from "../../network/response";
 import { TUserJwt } from "../../types";
 import { Request, Response } from "express";
 import BookService from "../../services/book";
+import { Settings } from "luxon";
+
+Settings.defaultZone = "America/Mexico_City";
 
 class Controller {
     static async create(req: Request, res: Response) {
