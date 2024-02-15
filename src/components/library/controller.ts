@@ -49,6 +49,20 @@ class Controller {
             return response.error(req, res, error, 500);
         }
     }
+
+    static async delete(req: Request, res: Response) {
+        const user = req.user as TUserJwt;
+        try {
+            const { bookId } = req.params;
+            const updatedLibrary = await store.delete({
+                bookId,
+                userId: user.id,
+            });
+            return response.success(req, res, updatedLibrary, 200);
+        } catch (error) {
+            return response.error(req, res, error, 500);
+        }
+    }
 }
 
 export default Controller;

@@ -94,10 +94,10 @@ class Controller {
 
                 return responseHTTP.success(req, res, randomBooks, 200);
             }
+
             const fetchedBooks = await Promise.all(
                 library.map((book) => BookService.getById({ id: book.bookId }))
             );
-
             const categories = fetchedBooks.map(
                 (item) => item.volumeInfo.categories
             );

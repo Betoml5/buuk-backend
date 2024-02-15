@@ -32,6 +32,25 @@ class Store {
             throw new Error(`Error at trying to get from library ${error}`);
         }
     }
+
+    static async delete({
+        userId,
+        bookId,
+    }: {
+        userId: number;
+        bookId: string;
+    }) {
+        try {
+            return await prisma.library.deleteMany({
+                where: {
+                    userId,
+                    bookId,
+                },
+            });
+        } catch (error) {
+            throw new Error(`Error at trying to delete from library ${error}`);
+        }
+    }
 }
 
 export default Store;

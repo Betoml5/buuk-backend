@@ -36,6 +36,25 @@ class Store {
             throw new Error(`Error at trying to get wishlist ${error}`);
         }
     }
+
+    static async delete({
+        bookId,
+        userId,
+    }: {
+        bookId: string;
+        userId: number;
+    }) {
+        try {
+            return await prisma.wishlist.deleteMany({
+                where: {
+                    userId,
+                    bookId: bookId,
+                },
+            });
+        } catch (error) {
+            throw new Error(`Error at trying to delete wishlist ${error}`);
+        }
+    }
 }
 
 export default Store;
