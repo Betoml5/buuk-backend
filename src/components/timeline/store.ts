@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import prisma from "../../database/connection";
 
 class Store {
@@ -32,6 +33,28 @@ class Store {
                 },
             });
             return timeline;
+        } catch (error: any) {
+            throw new Error(error);
+        }
+    }
+
+    static async update({
+        id,
+        userId,
+        timeline,
+    }: {
+        id: number;
+        userId: number;
+        timeline: Prisma.TimelineUpdateInput;
+    }) {
+        try {
+            await prisma.timeline.updateMany({
+                where: {
+                    id,
+                    userId,
+                },
+                data: timeline,
+            });
         } catch (error: any) {
             throw new Error(error);
         }

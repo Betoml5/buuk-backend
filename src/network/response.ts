@@ -23,7 +23,6 @@ const success = (_req: Request, res: Response, message: any, status: any) => {
 };
 
 const error = (_req: Request, res: Response, message: any, status: any) => {
-    console.log(message);
     res.status(status || 500).send({
         error: message,
         body: "",

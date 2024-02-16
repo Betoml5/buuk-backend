@@ -4,7 +4,6 @@ import response from "../../network/response";
 import { TUserJwt } from "../../types";
 import { Request, Response } from "express";
 import BookService from "../../services/book";
-import { DateTime } from "luxon";
 import { convertUTCDateToLocalDate } from "../../utils/date";
 
 class Controller {
@@ -19,11 +18,16 @@ class Controller {
                 pages,
             });
 
-            updatedTimeLine.createdAt = convertUTCDateToLocalDate(
-                updatedTimeLine.createdAt
-            );
+            const newDate = new Date(updatedTimeLine.createdAt);
+            const localDate = convertUTCDateToLocalDate(newDate);
 
-            return response.success(req, res, updatedTimeLine, 201);
+            const timelineWithLocalDate = await store.update({
+                id: updatedTimeLine.id,
+                userId: user.id,
+                timeline: { createdAt: localDate },
+            });
+
+            return response.success(req, res, timelineWithLocalDate, 201);
         } catch (error) {
             return response.error(req, res, error, 500);
         }

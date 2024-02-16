@@ -9,7 +9,6 @@ export const middlewares = {
             "jwt",
             { session: false },
             (e: any, user: TUserJwt, info: any) => {
-                console.log(info);
                 if (info)
                     return responseHTTP.error(req, res, info.message, 401);
                 if (e) return responseHTTP.error(req, res, e.message, 500);
