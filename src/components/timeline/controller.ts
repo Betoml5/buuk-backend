@@ -4,9 +4,8 @@ import response from "../../network/response";
 import { TUserJwt } from "../../types";
 import { Request, Response } from "express";
 import BookService from "../../services/book";
-import { Settings } from "luxon";
-
-Settings.defaultZone = "America/Mexico_City";
+import { DateTime } from "luxon";
+import { convertUTCDateToLocalDate } from "../../utils/date";
 
 class Controller {
     static async create(req: Request, res: Response) {
@@ -20,6 +19,10 @@ class Controller {
                 pages,
             });
 
+            updatedTimeLine.createdAt = convertUTCDateToLocalDate(
+                updatedTimeLine.createdAt
+            );
+
             return response.success(req, res, updatedTimeLine, 201);
         } catch (error) {
             return response.error(req, res, error, 500);
@@ -31,6 +34,7 @@ class Controller {
             const timeline = await store.getById({ userId: user.id });
             //fetch only once per book id because if the user has read the same book multiple times
             // we should not fetch the same book multiple times
+
             const booksIds = timeline.map((item) => item.bookId);
             const uniqueBooksIds = R.uniq(booksIds);
             const books = await Promise.all(
@@ -55,11 +59,6 @@ class Controller {
                     books: groupedByDate[key],
                 };
             });
-
-            // order by date desc
-
-            // with R
-
             const ordered = R.sort(R.descend(R.prop("date")), flattened);
 
             return response.success(req, res, ordered, 200);
