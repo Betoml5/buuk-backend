@@ -15,6 +15,7 @@ passport.use(
             passwordField: "password",
         },
         async (email: string, password: string, done: any) => {
+            email = email.toLowerCase();
             try {
                 const user = await prisma.user.findUnique({
                     where: { email },
