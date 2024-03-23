@@ -15,7 +15,7 @@ router.get("/library", middlewares.isAuthenticated, controller.getLibraryData);
 router.post("/", encrypt, controller.create);
 router.get("/:id", controller.getById);
 router.get("/", controller.get);
-router.put("/:id", middlewares.isAuthenticated, controller.update);
+router.put("/", middlewares.isAuthenticated, controller.update);
 router.delete("/:id", middlewares.isAuthenticated, controller.deleteOne);
 
 // router.patch(

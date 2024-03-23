@@ -16,11 +16,7 @@ model User {
     username   String
     password   String
     image      String     @default("")
-<<<<<<< HEAD
-    whishlist  Wishlist[]
-=======
     wishlist   Wishlist[]
->>>>>>> development
     readlist   Readlist[]
     library    Library[]
     timeline   Timeline[]
@@ -31,71 +27,39 @@ model User {
     updatedAt  DateTime   @updatedAt
 }
 
-<<<<<<< HEAD
-model Timeline {
-    id        Int      @id @default(autoincrement())
-    user      User     @relation(fields: [userId], references: [id])
-    userId    Int
-    bookISBN  String
-=======
 model Wishlist {
     id        Int      @id @default(autoincrement())
     user      User     @relation(fields: [userId], references: [id])
     userId    Int
     bookId    String   @default("")
->>>>>>> development
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
 
-<<<<<<< HEAD
-model Wishlist {
-    id        Int      @id @default(autoincrement())
-    user      User     @relation(fields: [userId], references: [id])
-    userId    Int
-    bookISBN  String
-=======
 model Readlist {
     id        Int      @id @default(autoincrement())
     user      User     @relation(fields: [userId], references: [id])
     userId    Int
     bookId    String   @default("")
->>>>>>> development
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
 
-<<<<<<< HEAD
-model Readlist {
-    id        Int      @id @default(autoincrement())
-    user      User     @relation(fields: [userId], references: [id])
-    userId    Int
-    bookISBN  String
-=======
 model Library {
     id        Int      @id @default(autoincrement())
     user      User     @relation(fields: [userId], references: [id])
     userId    Int
     bookId    String   @default("")
->>>>>>> development
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
 
-<<<<<<< HEAD
-model Library {
-    id        Int      @id @default(autoincrement())
-    user      User     @relation(fields: [userId], references: [id])
-    userId    Int
-    bookISBN  String
-=======
 model Timeline {
     id        Int      @id @default(autoincrement())
     user      User     @relation(fields: [userId], references: [id])
     userId    Int
     bookId    String   @default("")
     pages     Int      @default(0)
->>>>>>> development
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }

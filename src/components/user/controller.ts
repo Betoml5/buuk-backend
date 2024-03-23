@@ -37,15 +37,15 @@ class Controller {
         }
     }
     static async update(req: Request, res: Response) {
-        const { user } = req.body;
-        const { id } = req.params;
+        const { changes } = req.body;
+        const user = req.user as TUserJwt;
         try {
             if (!user) {
                 throw new Error("No data provided to update user");
             }
             const userUpdated = await store.update({
-                id: Number(id),
-                user,
+                id: user.id,
+                changes,
             });
             return responseHTTP.success(req, res, userUpdated, 200);
         } catch (error) {

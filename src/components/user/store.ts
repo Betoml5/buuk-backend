@@ -63,17 +63,17 @@ class Store {
 
     static async update({
         id,
-        user,
+        changes,
     }: {
         id: number;
-        user: Prisma.UserUpdateInput;
+        changes: Prisma.UserUpdateInput;
     }) {
         try {
             return await prisma.user.update({
                 where: {
                     id: id,
                 },
-                data: user,
+                data: changes,
             });
         } catch (error) {
             throw new Error(`Error trying to update user ${error}`);
